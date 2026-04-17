@@ -412,7 +412,14 @@
           <div class="f-row">
             <div class="f-label">お名前<span class="req">必須</span></div>
             <div>
-              <input type="text" name="name" id="name" placeholder="例）山田　太郎">
+              <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                  <input type="text" name="sei" id="sei" placeholder="姓　例）山田">
+                </div>
+                <div style="flex:1;">
+                  <input type="text" name="mei" id="mei" placeholder="名　例）太郎">
+                </div>
+              </div>
               <div class="err-msg" id="err-name">お名前を入力してください</div>
             </div>
           </div>
@@ -420,7 +427,14 @@
           <div class="f-row">
             <div class="f-label">ふりがな<span class="req">必須</span></div>
             <div>
-              <input type="text" name="kana" id="kana" placeholder="例）やまだ　たろう">
+              <div style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                  <input type="text" name="sei_kana" id="sei_kana" placeholder="せい　例）やまだ">
+                </div>
+                <div style="flex:1;">
+                  <input type="text" name="mei_kana" id="mei_kana" placeholder="めい　例）たろう">
+                </div>
+              </div>
               <div class="err-msg" id="err-kana">ふりがなを入力してください</div>
             </div>
           </div>
@@ -515,8 +529,8 @@
             <div class="f-label">確認書類の郵送先</div>
             <div>
               <div class="radio-row">
-                <label class="r-label"><input type="radio" name="alt_addr" value="いいえ" checked>上記住所と同じ</label>
-                <label class="r-label"><input type="radio" name="alt_addr" value="はい">別の住所に送る</label>
+                <label class="r-label"><input type="radio" name="alt_addr" value="上記住所と同じ" checked>上記住所と同じ</label>
+                <label class="r-label"><input type="radio" name="alt_addr" value="別の住所に送る">別の住所に送る</label>
               </div>
             </div>
           </div>
@@ -641,7 +655,7 @@
   // 別住所トグル
   document.querySelectorAll('[name="alt_addr"]').forEach(r => {
     r.addEventListener('change', () => {
-      document.getElementById('alt-fields').style.display = r.value === 'はい' ? 'block' : 'none';
+      document.getElementById('alt-fields').style.display = r.value === '別の住所に送る' ? 'block' : 'none';
     });
   });
 
@@ -670,8 +684,10 @@
     let ok = true;
     const checks = [
       { id: 'payment',   errId: 'err-payment',   type: 'select' },
-      { id: 'name',      errId: 'err-name' },
-      { id: 'kana',      errId: 'err-kana' },
+      { id: 'sei',       errId: 'err-name' },
+      { id: 'mei',       errId: 'err-name' },
+      { id: 'sei_kana',  errId: 'err-kana' },
+      { id: 'mei_kana',  errId: 'err-kana' },
       { id: 'birthdate', errId: 'err-birthdate' },
       { id: 'phone',     errId: 'err-phone' },
       { id: 'email',     errId: 'err-email',     type: 'email' },
@@ -706,8 +722,8 @@
       fee:       '33,000円（税込）',
       textbook:  fd.get('textbook'),
       payment:   fd.get('payment'),
-      name:      fd.get('name'),
-      kana:      fd.get('kana'),
+      name:      (fd.get('sei') || '') + '　' + (fd.get('mei') || ''),
+      kana:      (fd.get('sei_kana') || '') + '　' + (fd.get('mei_kana') || ''),
       gender:    fd.get('gender'),
       birthdate: fd.get('birthdate'),
       phone:     fd.get('phone'),
