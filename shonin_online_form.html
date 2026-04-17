@@ -537,11 +537,20 @@
 
           <div id="alt-fields" style="display:none;">
             <div class="f-row">
-              <div class="f-label">別途郵送先住所</div>
+              <div class="f-label">別途郵送先<span class="req">必須</span></div>
               <div>
-                <input type="text" name="alt_zip" placeholder="郵便番号" style="margin-bottom:8px; width:160px;">
-                <input type="text" name="alt_addr1" placeholder="都道府県・市区町村・番地" style="margin-bottom:8px;">
-                <input type="text" name="alt_addr2" placeholder="建物名・部屋番号">
+                <div class="zip-row">
+                  <span style="font-weight:500;">〒</span>
+                  <input type="text" name="alt_zip" id="alt_zip" placeholder="730-0051" maxlength="8" style="width:150px;">
+                  <button type="button" class="zip-btn" onclick="searchAltZip()">🔍 住所を自動入力</button>
+                </div>
+                <div class="hint">7桁入力後にボタンを押すと住所が自動で入ります</div>
+                <div style="margin-top:8px;">
+                  <input type="text" name="alt_addr1" id="alt_addr1" placeholder="都道府県・市区町村・番地" style="margin-bottom:8px;">
+                  <input type="text" name="alt_addr2" id="alt_addr2" placeholder="建物名・部屋番号">
+                </div>
+                <div class="err-msg" id="err-alt_zip">別途郵送先の郵便番号を入力してください</div>
+                <div class="err-msg" id="err-alt_addr1">別途郵送先の住所を入力してください</div>
               </div>
             </div>
           </div>
@@ -679,6 +688,39 @@
   }
   window.searchZip = searchZip;
 
+  async function searchAltZip() {
+    const raw = document.getElementById('alt_zip').value.replace(/-/g, '');
+    if (raw.length !== 7 || isNaN(raw)) {
+      alert('7桁の郵便番号を半角数字で入力してください\n例：730-0051');
+      return;
+    }
+    try {
+      const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${raw}`);
+      const data = await res.json();
+      if (data.results) {
+        const r = data.results[0];
+        document.getElementById('alt_addr1').value = r.address1 + r.address2 + r.address3;
+      } else {
+        alert('住所が見つかりませんでした。郵便番号をご確認ください。');
+      }
+    } catch { alert('通信エラーが発生しました。再度お試しください。'); }
+  }
+  window.searchAltZip = searchAltZip;ください\n例：730-0051');
+      return;
+    }
+    try {
+      const res = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${raw}`);
+      const data = await res.json();
+      if (data.results) {
+        const r = data.results[0];
+        document.getElementById('address1').value = r.address1 + r.address2 + r.address3;
+      } else {
+        alert('住所が見つかりませんでした。郵便番号をご確認ください。');
+      }
+    } catch { alert('通信エラーが発生しました。再度お試しください。'); }
+  }
+  window.searchZip = searchZip;
+
   // バリデーション
   function validate() {
     let ok = true;
@@ -712,6 +754,20 @@
     const eg = document.getElementById('err-gender');
     if (!g) { eg.classList.add('show'); ok = false; }
     else    { eg.classList.remove('show'); }
+
+    // 別途郵送先のバリデーション
+    const isAlt = document.querySelector('[name="alt_addr"]:checked')?.value === '別の住所に送る';
+    if (isAlt) {
+      const az = document.getElementById('alt_zip');
+      const aa = document.getElementById('alt_addr1');
+      const aze = document.getElementById('err-alt_zip');
+      const aae = document.getElementById('err-alt_addr1');
+      if (!az.value.trim()) { az.classList.add('err'); aze.classList.add('show'); ok = false; }
+      else                  { az.classList.remove('err'); aze.classList.remove('show'); }
+      if (!aa.value.trim()) { aa.classList.add('err'); aae.classList.add('show'); ok = false; }
+      else                  { aa.classList.remove('err'); aae.classList.remove('show'); }
+    }
+
     return ok;
   }
 
@@ -731,6 +787,9 @@
       zip:       fd.get('zip'),
       address:   (fd.get('address1') || '') + (fd.get('address2') ? '　' + fd.get('address2') : ''),
       altAddr:   fd.get('alt_addr'),
+      altAddress: fd.get('alt_addr') === '別の住所に送る'
+        ? '〒' + (fd.get('alt_zip')||'') + '　' + (fd.get('alt_addr1')||'') + (fd.get('alt_addr2') ? '　' + fd.get('alt_addr2') : '')
+        : '',
       workplace: fd.get('workplace') || '（なし）',
       coupon:    fd.get('coupon')    || '（なし）',
       message:   fd.get('message')  || '（なし）',
@@ -742,7 +801,7 @@
     textbook:'テキスト', payment:'支払方法',
     name:'お名前', kana:'ふりがな', gender:'性別',
     birthdate:'生年月日', phone:'電話番号', email:'メールアドレス',
-    zip:'郵便番号', address:'ご住所', altAddr:'確認書類の郵送先',
+    zip:'郵便番号', address:'ご住所', altAddr:'確認書類の郵送先', altAddress:'別途郵送先住所',
     workplace:'お勤め先', coupon:'ご優待コード', message:'ご質問',
   };
 
