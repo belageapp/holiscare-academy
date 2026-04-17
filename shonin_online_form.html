@@ -663,8 +663,8 @@
 <script>
   // 別住所トグル
   document.querySelectorAll('[name="alt_addr"]').forEach(r => {
-    r.addEventListener('change', () => {
-      document.getElementById('alt-fields').style.display = r.value === '別の住所に送る' ? 'block' : 'none';
+    r.addEventListener('change', function() {
+      document.getElementById('alt-fields').style.display = this.value === '別の住所に送る' ? 'block' : 'none';
     });
   });
 
