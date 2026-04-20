@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>受講生マイページ ログイン | ホリスケアアカデミー</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #2BBCD4;
+      --teal-dark: #1A9AB0;
+      --teal-light: #E0F7FB;
+      --teal-pale: #F0FBFD;
+      --pink: #F2708A;
+      --white: #FFFFFF;
+      --bg: #F7FAFB;
+      --text: #333333;
+      --text-mid: #666666;
+      --text-light: #AAAAAA;
+      --border: #D8EEF2;
+      --red: #E05050;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(150deg, var(--teal-dark) 0%, #0a6070 50%, #1a9ab0 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    body::before {
+      content: ''; position: absolute; top: -100px; right: -100px;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+    }
+    body::after {
+      content: ''; position: absolute; bottom: -80px; left: -80px;
+      width: 360px; height: 360px; border-radius: 50%;
+      background: rgba(43,188,212,0.08);
+    }
+
+    .login-card {
+      background: white; border-radius: 20px;
+      padding: 48px 44px; width: 420px; max-width: 100%;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.25);
+      position: relative; z-index: 1;
+      animation: fadeUp 0.4s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .login-logo { text-align: center; margin-bottom: 8px; }
+    .login-logo img { height: 44px; width: auto; }
+
+    .login-badge {
+      text-align: center; margin-bottom: 28px;
+    }
+    .login-badge span {
+      display: inline-block;
+      background: var(--teal-pale); color: var(--teal-dark);
+      border: 1px solid var(--teal-light);
+      font-size: 12px; font-weight: 700;
+      padding: 5px 16px; border-radius: 20px;
+      letter-spacing: 0.08em;
+    }
+
+    .login-title {
+      font-size: 20px; font-weight: 700; color: var(--teal-dark);
+      text-align: center; margin-bottom: 6px;
+    }
+    .login-sub {
+      font-size: 13px; color: var(--text-light);
+      text-align: center; margin-bottom: 28px;
+    }
+
+    .lf { margin-bottom: 18px; }
+    .lf label { display: block; font-size: 12px; font-weight: 500; color: var(--text-mid); margin-bottom: 6px; }
+    .lf input {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-family: 'Noto Sans JP', sans-serif; font-size: 14px; color: var(--text);
+      background: var(--teal-pale); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .lf input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(43,188,212,0.15); background: white; }
+
+    .login-btn {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      color: white; border: none; border-radius: 50px;
+      font-family: 'Noto Sans JP', sans-serif; font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 8px;
+      box-shadow: 0 4px 16px rgba(43,188,212,0.35);
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.05em;
+    }
+    .login-btn:hover { opacity: 0.9; }
+    .login-btn:active { transform: scale(0.99); }
+    .login-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+    .login-err {
+      color: var(--red); font-size: 13px; text-align: center;
+      margin-top: 12px; display: none;
+      background: #FFF0F0; border-radius: 8px; padding: 10px;
+    }
+
+    .forgot-link {
+      display: block; text-align: center; margin-top: 16px;
+      font-size: 13px; color: var(--teal-dark); text-decoration: none;
+    }
+    .forgot-link:hover { text-decoration: underline; }
+
+    .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+    .back-link {
+      display: block; text-align: center;
+      font-size: 13px; color: var(--text-light); text-decoration: none;
+    }
+    .back-link:hover { color: var(--teal-dark); }
+
+    .footer-note {
+      position: relative; z-index: 1;
+      margin-top: 24px; font-size: 12px;
+      color: rgba(255,255,255,0.5); text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="login-logo">
+    <img src="assets/logo.png" alt="ホリスケアアカデミー">
+  </div>
+  <div class="login-badge">
+    <span>受講生マイページ</span>
+  </div>
+  <div class="login-title">ログイン</div>
+  <div class="login-sub">お申し込み時にお送りしたメールアドレスとパスワードを入力してください</div>
+
+  <div class="lf">
+    <label>メールアドレス</label>
+    <input type="email" id="email" placeholder="例）taro@example.com">
+  </div>
+  <div class="lf">
+    <label>パスワード</label>
+    <input type="password" id="password" placeholder="••••••••">
+  </div>
+
+  <button class="login-btn" id="login-btn" onclick="doLogin()">マイページへログイン →</button>
+  <div class="login-err" id="login-err">メールアドレスまたはパスワードが正しくありません</div>
+
+  <a href="#" class="forgot-link" onclick="doReset()">パスワードをお忘れの方はこちら</a>
+
+  <hr class="divider">
+
+  <a href="shonin_online_form.html" class="back-link">← 申し込みフォームに戻る</a>
+</div>
+
+<div class="footer-note">
+  特定非営利活動法人Social Care Good　ホリスケアアカデミー
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const cfg = {
+    apiKey: "AIzaSyB-j3hMFs9xWOsFVphKut0bTSQskG6FrW4",
+    authDomain: "holiscare-academy.firebaseapp.com",
+    projectId: "holiscare-academy",
+    storageBucket: "holiscare-academy.firebasestorage.app",
+    messagingSenderId: "698886904450",
+    appId: "1:698886904450:web:04b9202840ffd321da329b"
+  };
+  const app = initializeApp(cfg);
+  const auth = getAuth(app);
+
+  // すでにログイン済みならマイページへ
+  onAuthStateChanged(auth, user => {
+    if (user) window.location.href = 'mypage.html';
+  });
+
+  window.__auth = auth;
+  window.__signIn = signInWithEmailAndPassword;
+  window.__resetPw = sendPasswordResetEmail;
+</script>
+
+<script>
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+
+  async function doLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    const err = document.getElementById('login-err');
+
+    if (!email || !password) {
+      err.textContent = 'メールアドレスとパスワードを入力してください';
+      err.style.display = 'block'; return;
+    }
+
+    btn.disabled = true; btn.textContent = 'ログイン中...';
+    err.style.display = 'none';
+
+    try {
+      await window.__signIn(window.__auth, email, password);
+      window.location.href = 'mypage.html';
+    } catch(e) {
+      err.textContent = 'メールアドレスまたはパスワードが正しくありません';
+      err.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'マイページへログイン →';
+    }
+  }
+  window.doLogin = doLogin;
+
+  async function doReset() {
+    const email = document.getElementById('email').value.trim();
+    if (!email) {
+      alert('メールアドレスを入力してから「パスワードをお忘れの方はこちら」をクリックしてください');
+      return;
+    }
+    try {
+      await window.__resetPw(window.__auth, email);
+      alert('パスワードリセット用のメールを送信しました。メールボックスをご確認ください。');
+    } catch(e) {
+      alert('メールの送信に失敗しました。メールアドレスをご確認ください。');
+    }
+  }
+  window.doReset = doReset;
+</script>
+
+</body>
+</html>
