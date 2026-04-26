@@ -467,20 +467,9 @@
           <div class="f-row">
             <div class="f-label">生年月日<span class="req">必須</span></div>
             <div>
-              <div style="display:flex; gap:8px; align-items:center;">
-              <select name="birthdate_year" id="birthdate_year" style="padding:8px; border:1px solid #ccc; border-radius:6px;">
-                <option value="">年</option>
-                <script>for(let y=1930;y<=2010;y++){document.write(`<option value="${y}">${y}年</option>`)}</script>
-              </select>
-              <select name="birthdate_month" id="birthdate_month" style="padding:8px; border:1px solid #ccc; border-radius:6px;">
-                <option value="">月</option>
-                <script>for(let m=1;m<=12;m++){document.write(`<option value="${m}">${m}月</option>`)}</script>
-              </select>
-              <select name="birthdate_day" id="birthdate_day" style="padding:8px; border:1px solid #ccc; border-radius:6px;">
-                <option value="">日</option>
-                <script>for(let d=1;d<=31;d++){document.write(`<option value="${d}">${d}日</option>`)}</script>
-              </select>
-            </div>
+<input type="date" id="birthdate_date" name="birthdate_date"
+              min="1930-01-01" max="2010-12-31"
+              style="padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; width:100%; box-sizing:border-box;">
             <input type="hidden" name="birthdate" id="birthdate">
               <div class="err-msg" id="err-birthdate">生年月日を入力してください</div>
             </div>
@@ -750,7 +739,7 @@
       { id: 'mei',       errId: 'err-name' },
       { id: 'sei_kana',  errId: 'err-kana' },
       { id: 'mei_kana',  errId: 'err-kana' },
-      { id: 'birthdate', errId: 'err-birthdate', isBirthdate: true },
+      { id: 'birthdate_date', errId: 'err-birthdate' },
       { id: 'phone',     errId: 'err-phone' },
       { id: 'email',     errId: 'err-email', type: 'email' },
       { id: 'zip',       errId: 'err-zip' },
@@ -764,22 +753,10 @@
         : el.value.trim() !== '';
 if (!pass) {
       el.classList.add('err'); err.classList.add('show'); ok = false;
-      if (c.isBirthdate) {
-        ['birthdate_year','birthdate_month','birthdate_day'].forEach(id => {
-          const el = document.getElementById(id);
-          el.classList.add('err');
-          el.style.borderColor = 'var(--red)';
-        });
-      }
+      
     } else {
       el.classList.remove('err'); err.classList.remove('show');
-      if (c.isBirthdate) {
-        ['birthdate_year','birthdate_month','birthdate_day'].forEach(id => {
-          const el = document.getElementById(id);
-          el.classList.remove('err');
-          el.style.borderColor = '#ccc';
-        });
-      }
+
     }
     });
 
@@ -851,11 +828,10 @@ const gLabels = document.querySelectorAll('[name="gender"]');
   document.getElementById('the-form').addEventListener('submit', function(e) {
     e.preventDefault();
     // 生年月日をhiddenフィールドにセット
-    const by = document.getElementById('birthdate_year').value;
-    const bm = document.getElementById('birthdate_month').value;
-    const bd = document.getElementById('birthdate_day').value;
-    if (by && bm && bd) {
-      document.getElementById('birthdate').value = `${by}年${bm}月${bd}日`;
+const bd = document.getElementById('birthdate_date').value;
+    if (bd) {
+      const [y, m, d] = bd.split('-');
+      document.getElementById('birthdate').value = `${y}年${parseInt(m)}月${parseInt(d)}日`;
     }
     if (!validate()) {
       document.getElementById('error-banner').style.display = 'block';
