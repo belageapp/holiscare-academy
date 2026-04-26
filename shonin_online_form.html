@@ -881,7 +881,7 @@ async function finalSubmit() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
           docId: docId,
-          textbook: window.__formVals.textbook === '購入 (6,600円) ' ? 'purchase' : 'none',
+          textbook: window.__formVals.textbook.includes('購入') ? 'purchase' : 'none',
           name: window.__formVals.name,
           email: window.__formVals.email,
           recaptchaToken: await grecaptcha.execute('6Ld958osAAAAAJAXj8JXvtikA-OrpysjJ7c_MqxM', {action: 'submit'}),
