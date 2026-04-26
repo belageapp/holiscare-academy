@@ -888,7 +888,7 @@ const gLabels = document.querySelectorAll('[name="gender"]');
       name:       (fd.get('sei') || '') + '　' + (fd.get('mei') || ''),
       kana:       (fd.get('sei_kana') || '') + '　' + (fd.get('mei_kana') || ''),
       gender:     fd.get('gender'),
-      birthdate: (() => { const y=document.getElementById('birthdate_year').value; const m=document.getElementById('birthdate_month').value; const d=document.getElementById('birthdate_day').value; return (y&&m&&d) ? `${y}年${m}月${d}日` : ''; })(),
+      birthdate: document.getElementById('birthdate').value,
       phone:      fd.get('phone'),
       email:      fd.get('email'),
       zip:        fd.get('zip'),
@@ -913,11 +913,7 @@ const gLabels = document.querySelectorAll('[name="gender"]');
   document.getElementById('the-form').addEventListener('submit', function(e) {
     e.preventDefault();
     // 生年月日をhiddenフィールドにセット
-const bd = document.getElementById('birthdate_date').value;
-    if (bd) {
-      const [y, m, d] = bd.split('-');
-      document.getElementById('birthdate').value = `${y}年${parseInt(m)}月${parseInt(d)}日`;
-    }
+
     if (!validate()) {
       document.getElementById('error-banner').style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
