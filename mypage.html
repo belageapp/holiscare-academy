@@ -286,9 +286,9 @@
 
     // 申し込みデータ取得
     try {
-      const q = query(
+const q = query(
         collection(db, 'applications'),
-        where('email', '==', user.email),
+        where('uid', '==', user.uid),
         orderBy('createdAt', 'desc')
       );
       const snap = await getDocs(q);
