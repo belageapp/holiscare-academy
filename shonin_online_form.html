@@ -346,10 +346,13 @@
     <div class="notice-box">
       <strong>【自動返信メールについて】</strong><br>
       お申し込み後、ご登録のメールアドレスへ確認メールが届きます。届かない場合は迷惑メールフォルダをご確認ください。<br>
-      「<strong>holiscare.or.jp</strong>」からのメールを受信許可してください。
+      「<strong>info@holiscare.or.jp</strong>」からのメールを受信許可してください。
     </div>
 
-    <form id="the-form" novalidate>
+    <div id="error-banner" style="display:none; background:#fee; border:1px solid #f99; color:#c00; padding:14px 20px; border-radius:8px; margin-bottom:16px; font-size:14px;">
+  ⚠️ 入力内容にエラーがあります。赤くなっている項目をご確認ください。
+</div>
+<form id="the-form" novalidate>
 
       <!-- 講座・日程 -->
       <div class="form-card">
@@ -826,7 +829,12 @@
     if (by && bm && bd) {
       document.getElementById('birthdate').value = `${by}年${bm}月${bd}日`;
     }
-    if (!validate()) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+    if (!validate()) {
+      document.getElementById('error-banner').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    document.getElementById('error-banner').style.display = 'none';
 
 
     // プライバシーポリシー同意チェック
