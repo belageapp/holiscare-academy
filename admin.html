@@ -732,7 +732,7 @@ document.getElementById('m-status').value = a.status || 'pending';
     try {
       await window.__updateDoc(window.__doc(window.__db, 'applications', curId), {
         status: 'confirmed',
-        confirmedAt: window.__serverTimestamp(),
+        confirmedAt: window.__serverTs(),
       });
       const idx = all.findIndex(a => a.id === curId);
       if (idx > -1) all[idx].status = 'confirmed';
