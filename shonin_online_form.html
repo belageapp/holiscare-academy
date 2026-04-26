@@ -863,10 +863,10 @@ if (!pass) {
 const gLabels = document.querySelectorAll('[name="gender"]');
     if (!g) {
       eg.classList.add('show'); ok = false;
-      gLabels.forEach(el => el.closest('label').style.outline = '1px solid var(--red)');
+      gLabels.forEach(el => el.closest('label').style.border = '1px solid var(--red)');
     } else {
       eg.classList.remove('show');
-      gLabels.forEach(el => el.closest('label').style.outline = '');
+      gLabels.forEach(el => el.closest('label').style.border = '');
     }
 
     const isAlt = document.querySelector('[name="alt_addr"]:checked') &&
