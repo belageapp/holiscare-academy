@@ -748,7 +748,7 @@
       { id: 'mei',       errId: 'err-name' },
       { id: 'sei_kana',  errId: 'err-kana' },
       { id: 'mei_kana',  errId: 'err-kana' },
-      { id: 'birthdate', errId: 'err-birthdate' },
+      { id: 'birthdate', errId: 'err-birthdate', isBirthdate: true },
       { id: 'phone',     errId: 'err-phone' },
       { id: 'email',     errId: 'err-email', type: 'email' },
       { id: 'zip',       errId: 'err-zip' },
@@ -760,8 +760,21 @@
       const pass = c.type === 'email'
         ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())
         : el.value.trim() !== '';
-      if (!pass) { el.classList.add('err'); err.classList.add('show'); ok = false; }
-      else        { el.classList.remove('err'); err.classList.remove('show'); }
+if (!pass) {
+      el.classList.add('err'); err.classList.add('show'); ok = false;
+      if (c.isBirthdate) {
+        ['birthdate_year','birthdate_month','birthdate_day'].forEach(id => {
+          document.getElementById(id).style.border = '2px solid #e33';
+        });
+      }
+    } else {
+      el.classList.remove('err'); err.classList.remove('show');
+      if (c.isBirthdate) {
+        ['birthdate_year','birthdate_month','birthdate_day'].forEach(id => {
+          document.getElementById(id).style.border = '1px solid #ccc';
+        });
+      }
+    }
     });
 
     const e1 = document.getElementById('email').value.trim();
@@ -772,8 +785,14 @@
 
     const g = document.querySelector('[name="gender"]:checked');
     const eg = document.getElementById('err-gender');
-    if (!g) { eg.classList.add('show'); ok = false; }
-    else    { eg.classList.remove('show'); }
+const gLabels = document.querySelectorAll('[name="gender"]');
+    if (!g) {
+      eg.classList.add('show'); ok = false;
+      gLabels.forEach(el => el.closest('label').style.outline = '2px solid #e33');
+    } else {
+      eg.classList.remove('show');
+      gLabels.forEach(el => el.closest('label').style.outline = '');
+    }
 
     const isAlt = document.querySelector('[name="alt_addr"]:checked') &&
                   document.querySelector('[name="alt_addr"]:checked').value === '別の住所に送る';
