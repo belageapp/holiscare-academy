@@ -819,6 +819,13 @@
 
   document.getElementById('the-form').addEventListener('submit', function(e) {
     e.preventDefault();
+    // 生年月日をhiddenフィールドにセット
+    const by = document.getElementById('birthdate_year').value;
+    const bm = document.getElementById('birthdate_month').value;
+    const bd = document.getElementById('birthdate_day').value;
+    if (by && bm && bd) {
+      document.getElementById('birthdate').value = `${by}年${bm}月${bd}日`;
+    }
     if (!validate()) { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
 
 
