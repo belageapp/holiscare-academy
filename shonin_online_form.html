@@ -303,6 +303,7 @@
       .back-btn, .final-btn { width: 100%; text-align: center; }
     }
   </style>
+<script src="https://www.google.com/recaptcha/api.js?render=6Ld958osAAAAAJAXj8JXvtikA-OrpysjJ7c_MqxM"></script>
 </head>
 <body>
 
@@ -879,11 +880,12 @@ async function finalSubmit() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            docId: docId,
-            textbook: window.__formVals.textbook === '購入（6,600円）' ? 'purchase' : 'none',
-            name: window.__formVals.name,
-            email: window.__formVals.email,
-          })
+          docId: docId,
+          textbook: window.__formVals.textbook === '購入 (6,600円) ' ? 'purchase' : 'none',
+          name: window.__formVals.name,
+          email: window.__formVals.email,
+          recaptchaToken: await grecaptcha.execute('6Ld958osAAAAAJAXj8JXvtikA-OrpysjJ7c_MqxM', {action: 'submit'}),
+        })
         });
         const data = await res.json();
         if (data.url) {
