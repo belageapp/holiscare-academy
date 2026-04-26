@@ -49,37 +49,23 @@
       font-family: 'Noto Sans JP', sans-serif;
       transition: all 0.2s;
     }
-    .logout-btn:hover { border-color: var(--teal); color: var(--teal-dark); }
-
-    /* メインラップ */
-    .main { max-width: 900px; margin: 0 auto; padding: 28px 16px 80px; }
+    .logout-btn:hover { background: var(--teal-light); border-color: var(--teal); }
 
     /* ウェルカム */
-    .welcome {
+    .welcome-bar {
       background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
-      border-radius: 16px; padding: 28px 32px; margin-bottom: 24px;
-      position: relative; overflow: hidden;
-      box-shadow: 0 6px 24px rgba(43,188,212,0.25);
+      padding: 24px 24px 20px; color: white;
     }
-    .welcome::after {
-      content: ''; position: absolute; top: -40px; right: -40px;
-      width: 160px; height: 160px; border-radius: 50%;
-      background: rgba(255,255,255,0.06);
-    }
-    .welcome-name { color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 4px; }
-    .welcome h2 { color: white; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
-    .welcome-course {
-      display: inline-block;
-      background: rgba(255,255,255,0.2); color: white;
-      font-size: 12px; padding: 4px 14px; border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.3);
-    }
+    .welcome-bar h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .welcome-bar p { font-size: 13px; opacity: 0.85; }
 
-    /* お知らせ */
-    .notice-section { margin-bottom: 24px; }
+    /* メインコンテンツ */
+    .page-wrap { max-width: 800px; margin: 0 auto; padding: 24px 16px 60px; }
+
+    /* セクションタイトル */
     .section-title {
-      font-size: 15px; font-weight: 700; color: var(--teal-dark);
-      margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 700; color: var(--text);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
     }
     .section-title::before {
       content: ''; display: block; width: 4px; height: 18px;
@@ -87,416 +73,164 @@
     }
     .badge-count {
       background: var(--pink); color: white;
-      font-size: 11px; font-weight: 700;
-      padding: 2px 8px; border-radius: 10px;
+      font-size: 11px; font-weight: 700; border-radius: 10px;
+      padding: 1px 7px; margin-left: 4px;
     }
 
+    /* お知らせ */
+    .notice-section { margin-bottom: 28px; }
     .notice-card {
       background: white; border-radius: 12px;
       border: 1px solid var(--border);
-      box-shadow: 0 2px 12px var(--shadow);
+      box-shadow: 0 2px 8px var(--shadow);
       overflow: hidden;
     }
     .notice-item {
-      padding: 16px 20px; border-bottom: 1px solid var(--border);
-      display: flex; gap: 14px; align-items: flex-start;
-      transition: background 0.15s; cursor: pointer;
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
     }
     .notice-item:last-child { border-bottom: none; }
     .notice-item:hover { background: var(--teal-pale); }
-    .notice-item.unread { background: #FFF9E6; }
+    .notice-item.unread { background: #FFFBF0; }
     .notice-dot {
       width: 8px; height: 8px; border-radius: 50%;
-      background: var(--yellow); flex-shrink: 0; margin-top: 6px;
+      background: var(--yellow); flex-shrink: 0; margin-top: 5px;
     }
-    .notice-dot.read { background: transparent; }
-    .notice-date { font-size: 11px; color: var(--text-light); margin-bottom: 3px; }
-    .notice-title { font-size: 14px; font-weight: 500; color: var(--text); }
-    .notice-preview { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
+    .notice-item:not(.unread) .notice-dot { background: var(--border); }
+    .notice-date { font-size: 11px; color: var(--text-light); margin-bottom: 2px; }
+    .notice-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .notice-preview { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
 
-    /* グリッド */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-
-    /* カード共通 */
-    .card {
-      background: white; border-radius: 14px;
-      border: 1px solid var(--border); padding: 24px;
-      box-shadow: 0 2px 12px var(--shadow);
+    /* 講座一覧 */
+    .courses-section { margin-bottom: 28px; }
+    .course-card {
+      background: white; border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
+      padding: 20px; cursor: pointer;
+      transition: all 0.2s; display: flex; align-items: center; gap: 16px;
+      margin-bottom: 12px;
+      text-decoration: none; color: inherit;
     }
-    .card-title {
-      font-size: 14px; font-weight: 700; color: var(--teal-dark);
-      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    .course-card:hover {
+      border-color: var(--teal); box-shadow: 0 4px 16px var(--shadow);
+      transform: translateY(-1px);
     }
-    .card-icon {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; flex-shrink: 0;
+    .course-icon {
+      width: 52px; height: 52px; border-radius: 12px;
+      background: var(--teal-light); display: flex; align-items: center;
+      justify-content: center; font-size: 24px; flex-shrink: 0;
     }
-    .icon-teal { background: var(--teal-light); }
-    .icon-green { background: var(--green-light); }
-    .icon-orange { background: var(--orange-light); }
-    .icon-pink { background: var(--pink-light); }
-    .icon-yellow { background: var(--yellow-light); }
-
-    /* 申し込み内容 */
-    .app-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
-    .app-row:last-child { border-bottom: none; }
-    .app-label { color: var(--text-mid); }
-    .app-value { font-weight: 500; }
+    .course-info { flex: 1; }
+    .course-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .course-meta { font-size: 12px; color: var(--text-mid); margin-bottom: 6px; }
+    .course-arrow { color: var(--teal); font-size: 18px; flex-shrink: 0; }
     .status-badge {
-      display: inline-block; padding: 3px 12px;
-      border-radius: 20px; font-size: 11px; font-weight: 700;
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px;
     }
-    .status-未対応 { background: #FEF3C7; color: #92400E; }
-    .status-対応中 { background: var(--teal-light); color: var(--teal-dark); }
-    .status-完了   { background: var(--green-light); color: #2E7D52; }
+    .status-pending { background: var(--yellow-light); color: #B8860B; }
+    .status-confirmed { background: var(--teal-light); color: var(--teal-dark); }
+    .status-completed { background: var(--green-light); color: #2E7D47; }
+    .status-cancelled { background: #F5F5F5; color: #888; }
+    .status-未対応 { background: var(--yellow-light); color: #B8860B; }
+    .status-入金待ち { background: var(--yellow-light); color: #B8860B; }
+    .status-受講確定 { background: var(--teal-light); color: var(--teal-dark); }
+    .status-修了 { background: var(--green-light); color: #2E7D47; }
+    .status-キャンセル { background: #F5F5F5; color: #888; }
 
-    /* 課題進捗 */
-    .task-item {
-      padding: 10px 0; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 12px;
+    /* 空の講座 */
+    .no-course {
+      background: white; border-radius: 12px; border: 1px dashed var(--border);
+      padding: 32px; text-align: center; color: var(--text-light); font-size: 14px;
     }
-    .task-item:last-child { border-bottom: none; }
-    .task-num {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--teal-light); color: var(--teal-dark);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; flex-shrink: 0;
-    }
-    .task-name { font-size: 13px; flex: 1; }
-    .task-count { font-size: 11px; color: var(--text-light); }
-    .task-status {
-      font-size: 11px; font-weight: 700; padding: 2px 10px;
-      border-radius: 10px;
-    }
-    .task-未提出 { background: #F3F4F6; color: #6B7280; }
-    .task-提出済 { background: var(--green-light); color: #2E7D52; }
-    .task-採点済 { background: var(--teal-light); color: var(--teal-dark); }
-    .task-btn {
-      background: var(--teal); color: white; border: none;
-      border-radius: 20px; padding: 5px 14px; font-size: 12px;
-      font-family: 'Noto Sans JP', sans-serif; cursor: pointer;
-      font-weight: 500; transition: opacity 0.2s; white-space: nowrap;
-    }
-    .task-btn:hover { opacity: 0.85; }
-    .task-btn.done { background: var(--border); color: var(--text-light); cursor: default; }
-
-    /* 動画 */
-    .video-item {
-      padding: 12px 0; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 12px;
-    }
-    .video-item:last-child { border-bottom: none; }
-    .video-thumb {
-      width: 80px; height: 52px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 20px;
-    }
-    .video-title { font-size: 13px; font-weight: 500; flex: 1; }
-    .video-duration { font-size: 11px; color: var(--text-light); margin-top: 3px; }
-    .video-btn {
-      background: none; border: 1.5px solid var(--teal);
-      color: var(--teal-dark); border-radius: 20px;
-      padding: 5px 14px; font-size: 12px; cursor: pointer;
-      font-family: 'Noto Sans JP', sans-serif; font-weight: 500;
-      transition: all 0.2s; white-space: nowrap;
-    }
-    .video-btn:hover { background: var(--teal); color: white; }
-
-    /* 見積書・領収書 */
-    .doc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .doc-btn {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 8px; padding: 18px; border-radius: 12px;
-      border: 1.5px solid var(--border); cursor: pointer;
-      background: white; transition: all 0.2s; text-decoration: none;
-    }
-    .doc-btn:hover { border-color: var(--teal); background: var(--teal-pale); }
-    .doc-btn .doc-icon { font-size: 28px; }
-    .doc-btn .doc-label { font-size: 13px; font-weight: 700; color: var(--text); }
-    .doc-btn .doc-sub { font-size: 11px; color: var(--text-light); }
 
     /* パスワード変更 */
+    .pw-section { margin-bottom: 28px; }
+    .card {
+      background: white; border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--shadow);
+      padding: 20px;
+    }
+    .card-title {
+      font-size: 14px; font-weight: 700; color: var(--text);
+      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    }
+    .card-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 15px;
+    }
+    .icon-pink { background: var(--pink-light); }
+    .pw-form { display: flex; flex-direction: column; gap: 10px; }
     .pw-form input {
-      width: 100%; padding: 10px 14px; margin-bottom: 10px;
-      border: 1.5px solid var(--border); border-radius: 8px;
-      font-family: 'Noto Sans JP', sans-serif; font-size: 14px;
-      outline: none; transition: border-color 0.2s;
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: 'Noto Sans JP', sans-serif;
+      font-size: 13px; outline: none; transition: border-color 0.2s;
     }
     .pw-form input:focus { border-color: var(--teal); }
     .pw-submit {
-      width: 100%; background: var(--teal); color: white;
-      border: none; border-radius: 8px; padding: 11px;
-      font-family: 'Noto Sans JP', sans-serif; font-size: 14px;
-      font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+      background: var(--teal); color: white; border: none;
+      border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: 'Noto Sans JP', sans-serif;
+      transition: background 0.2s;
     }
-    .pw-submit:hover { opacity: 0.9; }
-
-    /* モーダル */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(10,80,95,0.5); z-index: 300;
-      align-items: center; justify-content: center; padding: 16px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: white; border-radius: 16px;
-      width: 640px; max-width: 100%; max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.2);
-      animation: fadeUp 0.3s ease;
-    }
-    .modal-head {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 18px 24px; border-bottom: 2px solid var(--teal-light);
-      background: var(--teal-pale); border-radius: 16px 16px 0 0;
-      position: sticky; top: 0;
-    }
-    .modal-title { font-size: 15px; font-weight: 700; color: var(--teal-dark); }
-    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-mid); }
-    .modal-body { padding: 24px; }
-
-    /* 課題フォーム */
-    .task-progress {
-      background: var(--teal-pale); border-radius: 8px;
-      padding: 12px 16px; margin-bottom: 20px;
-      display: flex; align-items: center; gap: 12px;
-    }
-    .progress-bar-wrap { flex: 1; background: var(--border); border-radius: 10px; height: 8px; }
-    .progress-bar { height: 8px; border-radius: 10px; background: var(--teal); transition: width 0.3s; }
-    .progress-text { font-size: 13px; font-weight: 700; color: var(--teal-dark); white-space: nowrap; }
-
-    .q-item { margin-bottom: 24px; }
-    .q-num { font-size: 11px; color: var(--teal-dark); font-weight: 700; margin-bottom: 4px; }
-    .q-text { font-size: 14px; font-weight: 500; margin-bottom: 12px; line-height: 1.7; }
-    .q-options { display: flex; flex-direction: column; gap: 8px; }
-    .q-option {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-radius: 8px;
-      border: 1.5px solid var(--border); cursor: pointer;
-      font-size: 14px; transition: all 0.15s; user-select: none;
-    }
-    .q-option:hover { border-color: var(--teal); background: var(--teal-pale); }
-    .q-option.selected { border-color: var(--teal); background: var(--teal-pale); font-weight: 500; }
-    .q-option input { accent-color: var(--teal); }
-
-    .task-actions { display: flex; gap: 12px; margin-top: 24px; }
-    .save-btn {
-      flex: 1; background: white; border: 1.5px solid var(--teal);
-      color: var(--teal-dark); border-radius: 8px; padding: 12px;
-      font-family: 'Noto Sans JP', sans-serif; font-size: 14px;
-      font-weight: 700; cursor: pointer; transition: all 0.2s;
-    }
-    .save-btn:hover { background: var(--teal-pale); }
-    .submit-task-btn {
-      flex: 2; background: var(--teal); color: white;
-      border: none; border-radius: 8px; padding: 12px;
-      font-family: 'Noto Sans JP', sans-serif; font-size: 14px;
-      font-weight: 700; cursor: pointer; transition: opacity 0.2s;
-    }
-    .submit-task-btn:hover { opacity: 0.9; }
-
-    /* フッター */
-    .site-footer {
-      background: var(--teal-dark); color: rgba(255,255,255,0.7);
-      text-align: center; padding: 20px; font-size: 12px;
-    }
+    .pw-submit:hover { background: var(--teal-dark); }
 
     @media (max-width: 600px) {
-      .grid-2 { grid-template-columns: 1fr; }
-      .doc-grid { grid-template-columns: 1fr 1fr; }
-      .main { padding: 20px 12px 60px; }
+      .welcome-bar { padding: 20px 16px; }
+      .page-wrap { padding: 20px 12px 60px; }
     }
   </style>
 </head>
 <body>
 
 <header class="header">
-  <a href="https://academy.holiscare.or.jp/" target="_blank">
-    <img src="assets/logo.png" alt="ホリスケアアカデミー" style="height:36px;">
-  </a>
+  <div class="header-logo">
+    <img src="holiscare_logo.png" alt="ホリスケアアカデミー" onerror="this.style.display='none'">
+  </div>
   <div class="header-right">
     <span class="header-name" id="header-name"></span>
     <button class="logout-btn" onclick="doLogout()">ログアウト</button>
   </div>
 </header>
 
-<div class="main">
+<div class="welcome-bar">
+  <h2 id="welcome-name">こんにちは</h2>
+  <p>ホリスケアアカデミー マイページ</p>
+</div>
 
-  <!-- ウェルカム -->
-  <div class="welcome">
-    <div class="welcome-name" id="welcome-name">さん、こんにちは</div>
-    <h2>マイページへようこそ！</h2>
-    <span class="welcome-course" id="welcome-course">オンライン初任者研修</span>
-  </div>
+<div class="page-wrap">
 
   <!-- お知らせ -->
   <div class="notice-section">
     <div class="section-title">
       📢 お知らせ・連絡
-      <span class="badge-count" id="unread-count">2</span>
+      <span class="badge-count" id="unread-count" style="display:none;"></span>
     </div>
     <div class="notice-card" id="notice-list">
-      <div class="notice-item unread">
-        <div class="notice-dot"></div>
+      <div class="notice-item">
+        <div class="notice-dot" style="background:var(--border);"></div>
         <div>
-          <div class="notice-date">2026年4月20日</div>
-          <div class="notice-title">受講開始のご案内</div>
-          <div class="notice-preview">オンライン初任者研修の受講が開始されました。マイページから動画教材をご覧いただけます。</div>
-        </div>
-      </div>
-      <div class="notice-item unread">
-        <div class="notice-dot"></div>
-        <div>
-          <div class="notice-date">2026年4月18日</div>
-          <div class="notice-title">お申し込みありがとうございます</div>
-          <div class="notice-preview">ホリスケアアカデミーへのお申し込みを受け付けました。</div>
+          <div class="notice-date">読み込み中...</div>
+          <div class="notice-title">お知らせを取得しています</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 申し込み内容 + 課題進捗 -->
-  <div class="grid-2">
-
-    <!-- 申し込み内容 -->
-    <div class="card">
-      <div class="card-title">
-        <div class="card-icon icon-teal">📋</div>
-        受講内容・ステータス
-      </div>
-      <div id="app-detail">
-        <div class="app-row"><span class="app-label">講座名</span><span class="app-value">オンライン初任者研修</span></div>
-        <div class="app-row"><span class="app-label">受講料</span><span class="app-value">33,000円（税込）</span></div>
-        <div class="app-row"><span class="app-label">支払方法</span><span class="app-value" id="app-payment">—</span></div>
-        <div class="app-row"><span class="app-label">テキスト</span><span class="app-value" id="app-textbook">—</span></div>
-        <div class="app-row">
-          <span class="app-label">ステータス</span>
-          <span class="status-badge status-未対応" id="app-status">未対応</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 課題進捗 -->
-    <div class="card">
-      <div class="card-title">
-        <div class="card-icon icon-orange">📝</div>
-        添削課題の進捗
-      </div>
-      <div id="task-list">
-        <div class="task-item">
-          <div class="task-num">1</div>
-          <div style="flex:1;">
-            <div class="task-name">介護における尊厳の保持・自立支援</div>
-            <div class="task-count">26問</div>
-          </div>
-          <span class="task-status task-未提出">未提出</span>
-          <button class="task-btn" onclick="openTask(1)">回答する</button>
-        </div>
-        <div class="task-item">
-          <div class="task-num">2</div>
-          <div style="flex:1;">
-            <div class="task-name">介護・福祉サービスの理解と医療との連携</div>
-            <div class="task-count">27問</div>
-          </div>
-          <span class="task-status task-未提出">未提出</span>
-          <button class="task-btn" onclick="openTask(2)">回答する</button>
-        </div>
-        <div class="task-item">
-          <div class="task-num">3</div>
-          <div style="flex:1;">
-            <div class="task-name">介護におけるコミュニケーション技術</div>
-            <div class="task-count">25問</div>
-          </div>
-          <span class="task-status task-未提出">未提出</span>
-          <button class="task-btn" onclick="openTask(3)">回答する</button>
-        </div>
-        <div class="task-item">
-          <div class="task-num">4</div>
-          <div style="flex:1;">
-            <div class="task-name">こころとからだのしくみと生活支援技術（1）</div>
-            <div class="task-count">25問</div>
-          </div>
-          <span class="task-status task-未提出">未提出</span>
-          <button class="task-btn" onclick="openTask(4)">回答する</button>
-        </div>
-        <div class="task-item">
-          <div class="task-num">5</div>
-          <div style="flex:1;">
-            <div class="task-name">こころとからだのしくみと生活支援技術（2）</div>
-            <div class="task-count">26問</div>
-          </div>
-          <span class="task-status task-未提出">未提出</span>
-          <button class="task-btn" onclick="openTask(5)">回答する</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- 動画教材 -->
-  <div class="notice-section">
-    <div class="section-title">🎬 動画教材</div>
-    <div class="card">
-      <div id="video-list">
-        <div class="video-item">
-          <div class="video-thumb">▶</div>
-          <div style="flex:1;">
-            <div class="video-title">第1章：介護の基本理念と尊厳の保持</div>
-            <div class="video-duration">約45分</div>
-          </div>
-          <button class="video-btn" onclick="alert('動画URLは管理者が設定します')">視聴する</button>
-        </div>
-        <div class="video-item">
-          <div class="video-thumb">▶</div>
-          <div style="flex:1;">
-            <div class="video-title">第2章：介護保険制度と福祉サービス</div>
-            <div class="video-duration">約50分</div>
-          </div>
-          <button class="video-btn" onclick="alert('動画URLは管理者が設定します')">視聴する</button>
-        </div>
-        <div class="video-item">
-          <div class="video-thumb">▶</div>
-          <div style="flex:1;">
-            <div class="video-title">第3章：コミュニケーション技術</div>
-            <div class="video-duration">約40分</div>
-          </div>
-          <button class="video-btn" onclick="alert('動画URLは管理者が設定します')">視聴する</button>
-        </div>
-      </div>
+  <!-- 受講講座一覧 -->
+  <div class="courses-section">
+    <div class="section-title">📚 受講講座一覧</div>
+    <div id="course-list">
+      <div class="no-course">受講中の講座を読み込んでいます...</div>
     </div>
   </div>
 
-  <!-- 見積書・領収書 + パスワード変更 -->
-  <div class="grid-2">
-
-    <!-- 見積書・領収書 -->
-    <div class="card">
-      <div class="card-title">
-        <div class="card-icon icon-green">📄</div>
-        書類の発行
-      </div>
-      <p style="font-size:13px; color:var(--text-mid); margin-bottom:16px;">見積書・領収書を発行できます。宛名は変更可能です。</p>
-      <div style="margin-bottom:12px;">
-        <label style="font-size:12px; color:var(--text-mid); display:block; margin-bottom:5px;">宛名（デフォルト：お名前）</label>
-        <input type="text" id="doc-name" placeholder="例）山田太郎　または　○○株式会社" style="width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'Noto Sans JP',sans-serif; font-size:13px; outline:none;">
-      </div>
-      <div class="doc-grid">
-        <button class="doc-btn" onclick="generateDoc('見積書')">
-          <span class="doc-icon">📋</span>
-          <span class="doc-label">見積書</span>
-          <span class="doc-sub">PDF発行</span>
-        </button>
-        <button class="doc-btn" onclick="generateDoc('領収書')">
-          <span class="doc-icon">🧾</span>
-          <span class="doc-label">領収書</span>
-          <span class="doc-sub">PDF発行</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- パスワード変更 -->
+  <!-- パスワード変更 -->
+  <div class="pw-section">
+    <div class="section-title">🔒 パスワード変更</div>
     <div class="card">
       <div class="card-title">
         <div class="card-icon icon-pink">🔒</div>
@@ -510,52 +244,19 @@
       </div>
       <div id="pw-msg" style="font-size:13px; margin-top:10px; display:none;"></div>
     </div>
-
   </div>
 
 </div>
 
-<!-- 課題モーダル -->
-<div class="modal-overlay" id="task-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <span class="modal-title" id="task-modal-title">課題1</span>
-      <button class="modal-close" onclick="closeTask()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="task-progress">
-        <div class="progress-bar-wrap">
-          <div class="progress-bar" id="progress-bar" style="width:0%"></div>
-        </div>
-        <span class="progress-text" id="progress-text">0 / 0問</span>
-      </div>
-      <div id="task-questions"></div>
-      <div class="task-actions">
-        <button class="save-btn" onclick="saveTask()">途中保存する</button>
-        <button class="submit-task-btn" onclick="submitTask()">提出する</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<footer class="site-footer">
-  <strong>特定非営利活動法人Social Care Good　ホリスケアアカデミー</strong><br>
-  広島市中区大手町3-1-7 ユナイテッドMKビル 総合受付4F　｜　TEL：082-545-2402
-</footer>
-
-<!-- Firebase -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-  import { getFirestore, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, onAuthStateChanged, signOut, updatePassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+  import { getFirestore, collection, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const cfg = {
-    apiKey: "AIzaSyB-j3hMFs9xWOsFVphKut0bTSQskG6FrW4",
+    apiKey: "AIzaSyCl48Fay9AbMLRXJ7npya4PJIgDQPvltxs",
     authDomain: "holiscare-academy.firebaseapp.com",
     projectId: "holiscare-academy",
-    storageBucket: "holiscare-academy.firebasestorage.app",
-    messagingSenderId: "698886904450",
-    appId: "1:698886904450:web:04b9202840ffd321da329b"
   };
   const app = initializeApp(cfg);
   const auth = getAuth(app);
@@ -565,15 +266,23 @@
   window.__signOut = signOut;
   window.__updatePassword = updatePassword;
 
+  const statusLabel = {
+    pending: '入金待ち',
+    confirmed: '受講確定',
+    video_done: '動画教材完了',
+    task_done: '添削課題完了',
+    ojt_done: 'OJT完了',
+    completed: '修了',
+    cancelled: 'キャンセル',
+    awaiting_payment: '入金待ち',
+  };
+
   onAuthStateChanged(auth, async user => {
     if (!user) { window.location.href = 'mypage_login.html'; return; }
 
-    // 名前表示
     const name = user.displayName || user.email;
     document.getElementById('header-name').textContent = name + ' さん';
-    document.getElementById('welcome-name').textContent = name + ' さん、こんにちは';
-    document.getElementById('doc-name').placeholder = name;
-    document.getElementById('doc-name').value = name;
+    document.getElementById('welcome-name').textContent = name + ' さん、こんにちは！';
 
     // 申し込みデータ取得
     try {
@@ -583,16 +292,59 @@
         orderBy('createdAt', 'desc')
       );
       const snap = await getDocs(q);
-      if (!snap.empty) {
-        const data = snap.docs[0].data();
-        document.getElementById('app-payment').textContent = data.payment || '—';
-        document.getElementById('app-textbook').textContent = data.textbook || '—';
-        const statusEl = document.getElementById('app-status');
-        statusEl.textContent = data.status || '未対応';
-        statusEl.className = 'status-badge status-' + (data.status || '未対応');
-        if (data.course) document.getElementById('welcome-course').textContent = data.course;
+
+      const courseList = document.getElementById('course-list');
+
+      if (snap.empty) {
+        courseList.innerHTML = '<div class="no-course">受講中の講座はありません</div>';
+      } else {
+        courseList.innerHTML = '';
+        snap.docs.forEach(doc => {
+          const data = doc.data();
+          const status = data.status || 'pending';
+          const statusText = statusLabel[status] || status;
+          const card = document.createElement('a');
+          card.className = 'course-card';
+          card.href = `mypage_course.html?id=${doc.id}`;
+          card.innerHTML = `
+            <div class="course-icon">📋</div>
+            <div class="course-info">
+              <div class="course-name">${data.course || 'オンライン初任者研修'}</div>
+              <div class="course-meta">受講番号：${data.studentNo || '—'}</div>
+              <span class="status-badge status-${statusText}">${statusText}</span>
+            </div>
+            <div class="course-arrow">›</div>
+          `;
+          courseList.appendChild(card);
+        });
       }
-    } catch(e) { console.error(e); }
+    } catch(e) {
+      console.error(e);
+      document.getElementById('course-list').innerHTML = '<div class="no-course">データの取得に失敗しました</div>';
+    }
+
+    // お知らせ（固定 or Firestoreから取得）
+    const noticeList = document.getElementById('notice-list');
+    noticeList.innerHTML = `
+      <div class="notice-item unread">
+        <div class="notice-dot"></div>
+        <div>
+          <div class="notice-date">2026年4月26日</div>
+          <div class="notice-title">マイページをリニューアルしました</div>
+          <div class="notice-preview">講座ごとの詳細ページからコース状況・添削・動画・書類の確認ができるようになりました。</div>
+        </div>
+      </div>
+      <div class="notice-item">
+        <div class="notice-dot" style="background:var(--border);"></div>
+        <div>
+          <div class="notice-date">2026年4月18日</div>
+          <div class="notice-title">お申し込みありがとうございます</div>
+          <div class="notice-preview">ホリスケアアカデミーへのお申し込みを受け付けました。</div>
+        </div>
+      </div>
+    `;
+    document.getElementById('unread-count').textContent = '1';
+    document.getElementById('unread-count').style.display = 'inline';
   });
 </script>
 
@@ -603,7 +355,6 @@
   }
   window.doLogout = doLogout;
 
-  // パスワード変更
   async function changePassword() {
     const pw1 = document.getElementById('new-pw').value;
     const pw2 = document.getElementById('new-pw2').value;
@@ -619,90 +370,6 @@
     }
   }
   window.changePassword = changePassword;
-
-  // 課題モーダル（サンプル問題）
-  const taskNames = [
-    '', '介護における尊厳の保持・自立支援',
-    '介護・福祉サービスの理解と医療との連携',
-    '介護におけるコミュニケーション技術',
-    'こころとからだのしくみと生活支援技術（1）',
-    'こころとからだのしくみと生活支援技術（2）'
-  ];
-  const sampleQuestions = [
-    { q: '介護における尊厳の保持とは何を意味しますか？', opts: ['利用者の意思を無視すること', '利用者一人ひとりの人格や価値観を尊重すること', '効率よくケアを提供すること', '介護者の判断で行動すること'] },
-    { q: '自立支援の考え方として正しいものはどれですか？', opts: ['できないことはすべて介護者が行う', '利用者が持っている能力を活かしながら支援する', '施設での生活に慣れさせる', '家族の希望を最優先する'] },
-    { q: '個人の尊厳を守るために重要なことはどれですか？', opts: ['プライバシーの保護', '効率的な作業', '利用者の管理', '施設のルール遵守'] },
-  ];
-
-  let currentTask = 0;
-  let answers = {};
-
-  function openTask(num) {
-    currentTask = num;
-    document.getElementById('task-modal-title').textContent = '課題' + num + '：' + taskNames[num];
-    const total = sampleQuestions.length;
-    document.getElementById('progress-text').textContent = '0 / ' + total + '問';
-    document.getElementById('progress-bar').style.width = '0%';
-
-    const container = document.getElementById('task-questions');
-    container.innerHTML = sampleQuestions.map((q, i) => `
-      <div class="q-item">
-        <div class="q-num">問題 ${i+1}</div>
-        <div class="q-text">${q.q}</div>
-        <div class="q-options">
-          ${q.opts.map((opt, j) => `
-            <label class="q-option" id="opt-${i}-${j}">
-              <input type="radio" name="q${i}" value="${j}" onchange="selectAnswer(${i}, ${j})">
-              ${opt}
-            </label>
-          `).join('')}
-        </div>
-      </div>
-    `).join('');
-
-    document.getElementById('task-modal').classList.add('open');
-  }
-  window.openTask = openTask;
-
-  function selectAnswer(qIdx, optIdx) {
-    answers['q' + qIdx] = optIdx;
-    document.querySelectorAll(`[id^="opt-${qIdx}-"]`).forEach(el => el.classList.remove('selected'));
-    document.getElementById(`opt-${qIdx}-${optIdx}`).classList.add('selected');
-    const answered = Object.keys(answers).length;
-    const total = sampleQuestions.length;
-    document.getElementById('progress-text').textContent = answered + ' / ' + total + '問';
-    document.getElementById('progress-bar').style.width = (answered/total*100) + '%';
-  }
-  window.selectAnswer = selectAnswer;
-
-  function saveTask() {
-    alert('回答を保存しました。続きはいつでも再開できます。');
-    closeTask();
-  }
-  window.saveTask = saveTask;
-
-  function submitTask() {
-    const total = sampleQuestions.length;
-    const answered = Object.keys(answers).length;
-    if (answered < total) {
-      if (!confirm(`まだ${total - answered}問未回答です。このまま提出しますか？`)) return;
-    }
-    alert('課題' + currentTask + 'を提出しました！採点結果はマイページでご確認いただけます。');
-    closeTask();
-  }
-  window.submitTask = submitTask;
-
-  function closeTask() {
-    document.getElementById('task-modal').classList.remove('open');
-    answers = {};
-  }
-  window.closeTask = closeTask;
-
-  function generateDoc(type) {
-    const name = document.getElementById('doc-name').value || 'お名前';
-    alert(type + 'の発行機能は現在開発中です。\n宛名：' + name + '\n\n完成次第ご利用いただけます。');
-  }
-  window.generateDoc = generateDoc;
 </script>
 
 </body>
