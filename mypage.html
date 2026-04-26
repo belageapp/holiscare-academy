@@ -251,7 +251,7 @@
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getAuth, onAuthStateChanged, signOut, updatePassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
- import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+ import { getFirestore, collection, query, where, getDocs, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
   const cfg = {
 apiKey: "AIzaSyB-j3hMFs9xWOsFVphKut0bTSQskG6FrW4",
@@ -301,6 +301,11 @@ const q = query(
         courseList.innerHTML = '<div class="no-course">受講中の講座はありません</div>';
       } else {
         courseList.innerHTML = '';
+        // coursesマスタを取得
+        const courseMaster = {};
+        const courseSnap = await getDocs(collection(db, 'courses'));
+        courseSnap.forEach(d => { courseMaster[d.id] = d.data(); });
+
         const allDocs = snap.docs.sort((a, b) => {
           const ta = a.data().createdAt?.toMillis?.() || 0;
           const tb = b.data().createdAt?.toMillis?.() || 0;
@@ -315,9 +320,10 @@ const q = query(
           const statusText = statusLabel[status] || status;
           const card = document.createElement('a');
           card.className = 'course-card';
-          const courseCode = data.courseCode || '4010';
-const courseFile = courseCode === '4010' ? 'mypage_course_shonin.html' : 'mypage_course.html';
-card.href = `${courseFile}?id=${doc.id}`;
+const courseCode = data.courseCode || '4010';
+        const master = courseMaster[courseCode];
+        const courseFile = master?.pageFile || 'mypage_course_shonin.html';
+        card.href = `${courseFile}?id=${doc.id}`;
           card.innerHTML = `
             <div class="course-icon">📋</div>
             <div class="course-info">
@@ -343,8 +349,8 @@ courseList.appendChild(card);
               const card = document.createElement('a');
               card.className = 'course-card';
               const courseCode = data.courseCode || '4010';
-const courseFile = courseCode === '4010' ? 'mypage_course_shonin.html' : 'mypage_course.html';
-card.href = `${courseFile}?id=${doc.id}`;
+const m = courseMaster[courseCode];
+card.href = `${m?.pageFile || 'mypage_course_shonin.html'}?id=${doc.id}`;
               card.innerHTML = `
                 <div class="course-icon">📋</div>
                 <div class="course-info">
