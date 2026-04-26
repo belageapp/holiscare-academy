@@ -524,7 +524,7 @@
           <div class="f-row">
             <div class="f-label">郵便番号<span class="req">必須</span></div>
             <div>
-              <div class="zip-row">
+              <div class="zip-row" style="flex-wrap:wrap; gap:8px;">
                 <span style="font-weight:500;">〒</span>
                 <input type="text" name="zip" id="zip" placeholder="730-0051" maxlength="8" style="width:150px;">
                 <button type="button" class="zip-btn" onclick="searchZip()">🔍 住所を自動入力</button>
@@ -564,15 +564,15 @@
             <div class="f-row">
               <div class="f-label">別途郵送先<span class="req">必須</span></div>
               <div>
-                <div class="zip-row">
+                <div class="zip-row" style="flex-wrap:wrap; gap:8px;">
                   <span style="font-weight:500;">〒</span>
-                  <input type="text" name="alt_zip" id="alt_zip" placeholder="730-0051" maxlength="8" style="width:150px;">
+                  <input type="text" name="alt_zip" id="alt_zip" placeholder="730-0051" maxlength="8" style="width:130px;">
                   <button type="button" class="zip-btn" onclick="searchAltZip()">🔍 住所を自動入力</button>
                 </div>
                 <div class="hint">7桁入力後にボタンを押すと住所が自動で入ります</div>
                 <div style="margin-top:8px;">
-                  <input type="text" name="alt_addr1" id="alt_addr1" placeholder="都道府県・市区町村・番地" style="margin-bottom:8px;">
-                  <input type="text" name="alt_addr2" id="alt_addr2" placeholder="建物名・部屋番号">
+<input type="text" name="alt_addr1" id="alt_addr1" placeholder="都道府県・市区町村・番地" style="margin-bottom:8px; width:100%; box-sizing:border-box;">
+            <input type="text" name="alt_addr2" id="alt_addr2" placeholder="建物名・部屋番号" style="width:100%; box-sizing:border-box;">
                 </div>
                 <div class="err-msg" id="err-alt_zip">別途郵送先の郵便番号を入力してください</div>
                 <div class="err-msg" id="err-alt_addr1">別途郵送先の住所を入力してください</div>
