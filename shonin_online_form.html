@@ -302,9 +302,13 @@
       .f-label { padding-top: 0; }
       .submit-btn { padding: 16px 40px; font-size: 15px; }
       .conf-actions { flex-direction: column-reverse; align-items: center; }
-      .back-btn, .final-btn { width: 100%; text-align: center; }
-    }
-  </style>
+.back-btn, .final-btn { width: 100%; text-align: center; }
+  }
+  .bdp-col { -ms-overflow-style: none; }
+  .bdp-col::-webkit-scrollbar { display: none; }
+  .bdp-item { height: 40px; display: flex; align-items: center; justify-content: center; font-size: 16px; scroll-snap-align: center; cursor: pointer; }
+  .bdp-item.pad { visibility: hidden; }
+</style>
 <script src="https://www.google.com/recaptcha/api.js?render=6Ld958osAAAAAJAXj8JXvtikA-OrpysjJ7c_MqxM"></script>
 </head>
 <body>
@@ -467,10 +471,29 @@
           <div class="f-row">
             <div class="f-label">生年月日<span class="req">必須</span></div>
             <div>
-<input type="date" id="birthdate_date" name="birthdate_date"
-              min="1930-01-01" max="2010-12-31"
-              style="padding:8px; border:1px solid #ccc; border-radius:6px; font-size:14px; width:100%; box-sizing:border-box;">
+<!-- ドラムロールピッカー -->
+            <div id="bdpicker-display" onclick="openBdPicker()"
+              style="padding:10px 12px; border:1px solid #ccc; border-radius:6px; font-size:14px; cursor:pointer; color:#999; background:#fff; user-select:none;">
+              生年月日を選択
+            </div>
             <input type="hidden" name="birthdate" id="birthdate">
+            <!-- ピッカーモーダル -->
+            <div id="bdpicker-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:1000; align-items:flex-end; justify-content:center;">
+              <div style="background:#fff; width:100%; max-width:480px; border-radius:16px 16px 0 0; padding-bottom:env(safe-area-inset-bottom);">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px 8px;">
+                  <button type="button" onclick="closeBdPicker(false)" style="background:none; border:none; font-size:15px; color:#888; cursor:pointer;">キャンセル</button>
+                  <span style="font-weight:600; font-size:15px;">生年月日</span>
+                  <button type="button" onclick="closeBdPicker(true)" style="background:none; border:none; font-size:15px; color:var(--teal); font-weight:600; cursor:pointer;">完了</button>
+                </div>
+                <div style="display:flex; justify-content:center; gap:0; height:200px; overflow:hidden; position:relative;">
+                  <!-- 選択中ハイライト -->
+                  <div style="position:absolute; top:50%; left:0; right:0; height:40px; transform:translateY(-50%); background:rgba(43,188,212,0.08); border-top:1px solid var(--teal); border-bottom:1px solid var(--teal); pointer-events:none; z-index:1;"></div>
+                  <div id="bdp-year" class="bdp-col" style="flex:2; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none;"></div>
+                  <div id="bdp-month" class="bdp-col" style="flex:1; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none;"></div>
+                  <div id="bdp-day" class="bdp-col" style="flex:1; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none;"></div>
+                </div>
+              </div>
+            </div>
               <div class="err-msg" id="err-birthdate">生年月日を入力してください</div>
             </div>
           </div>
@@ -731,6 +754,68 @@
   window.searchAltZip = searchAltZip;
 
   // バリデーション
+  // ドラムロールピッカー
+  function openBdPicker() {
+    const overlay = document.getElementById('bdpicker-overlay');
+    overlay.style.display = 'flex';
+    const cur = document.getElementById('birthdate').value;
+    let cy = 1990, cm = 1, cd = 1;
+    if (cur) {
+      const m = cur.match(/(\d+)年(\d+)月(\d+)日/);
+      if (m) { cy = +m[1]; cm = +m[2]; cd = +m[3]; }
+    }
+    buildCol('bdp-year',  Array.from({length:81}, (_,i) => ({ v: 1930+i, l: (1930+i)+'年' })), cy);
+    buildCol('bdp-month', Array.from({length:12}, (_,i) => ({ v: i+1, l: (i+1)+'月' })), cm);
+    buildDayCol(cy, cm, cd);
+    document.getElementById('bdp-year').addEventListener('scroll', onYearMonthScroll, {passive:true});
+    document.getElementById('bdp-month').addEventListener('scroll', onYearMonthScroll, {passive:true});
+  }
+  function buildCol(id, items, selected) {
+    const el = document.getElementById(id);
+    el.innerHTML = '<div class="bdp-item pad"></div><div class="bdp-item pad"></div>' +
+      items.map(it => `<div class="bdp-item" data-v="${it.v}">${it.l}</div>`).join('') +
+      '<div class="bdp-item pad"></div><div class="bdp-item pad"></div>';
+    const idx = items.findIndex(it => it.v === selected);
+    el.scrollTop = (idx < 0 ? 0 : idx) * 40;
+  }
+  function buildDayCol(y, m, selected) {
+    const days = new Date(y, m, 0).getDate();
+    const items = Array.from({length:days}, (_,i) => ({ v: i+1, l: (i+1)+'日' }));
+    const cur = Math.min(selected, days);
+    buildCol('bdp-day', items, cur);
+  }
+  function getColVal(id) {
+    const el = document.getElementById(id);
+    const idx = Math.round(el.scrollTop / 40);
+    const items = el.querySelectorAll('.bdp-item:not(.pad)');
+    return items[idx] ? +items[idx].dataset.v : null;
+  }
+  function onYearMonthScroll() {
+    clearTimeout(window._bdpTimer);
+    window._bdpTimer = setTimeout(() => {
+      const y = getColVal('bdp-year');
+      const m = getColVal('bdp-month');
+      const d = getColVal('bdp-day');
+      if (y && m) buildDayCol(y, m, d || 1);
+    }, 150);
+  }
+  function closeBdPicker(save) {
+    if (save) {
+      const y = getColVal('bdp-year');
+      const m = getColVal('bdp-month');
+      const d = getColVal('bdp-day');
+      if (y && m && d) {
+        document.getElementById('birthdate').value = `${y}年${m}月${d}日`;
+        const disp = document.getElementById('bdpicker-display');
+        disp.textContent = `${y}年${m}月${d}日`;
+        disp.style.color = '#333';
+      }
+    }
+    document.getElementById('bdpicker-overlay').style.display = 'none';
+    document.getElementById('bdp-year').removeEventListener('scroll', onYearMonthScroll);
+    document.getElementById('bdp-month').removeEventListener('scroll', onYearMonthScroll);
+  }
+
   function validate() {
     let ok = true;
     const checks = [
@@ -739,7 +824,7 @@
       { id: 'mei',       errId: 'err-name' },
       { id: 'sei_kana',  errId: 'err-kana' },
       { id: 'mei_kana',  errId: 'err-kana' },
-      { id: 'birthdate_date', errId: 'err-birthdate' },
+      { id: 'birthdate', errId: 'err-birthdate' },
       { id: 'phone',     errId: 'err-phone' },
       { id: 'email',     errId: 'err-email', type: 'email' },
       { id: 'zip',       errId: 'err-zip' },
