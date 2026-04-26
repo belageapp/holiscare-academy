@@ -288,7 +288,7 @@
     try {
 const q = query(
         collection(db, 'applications'),
-        where('uid', '==', user.uid)
+        where('email', '==', user.email)
       );
       const snap = await getDocs(q);
 
