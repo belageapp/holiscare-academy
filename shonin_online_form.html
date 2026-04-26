@@ -459,7 +459,21 @@
           <div class="f-row">
             <div class="f-label">生年月日<span class="req">必須</span></div>
             <div>
-              <input type="date" name="birthdate" id="birthdate" style="width:200px;">
+              <div style="display:flex; gap:8px; align-items:center;">
+              <select name="birthdate_year" id="birthdate_year" style="padding:8px; border:1px solid #ccc; border-radius:6px;">
+                <option value="">年</option>
+                <script>for(let y=1930;y<=2010;y++){document.write(`<option value="${y}">${y}年</option>`)}</script>
+              </select>
+              <select name="birthdate_month" id="birthdate_month" style="padding:8px; border:1px solid #ccc; border-radius:6px;">
+                <option value="">月</option>
+                <script>for(let m=1;m<=12;m++){document.write(`<option value="${m}">${m}月</option>`)}</script>
+              </select>
+              <select name="birthdate_day" id="birthdate_day" style="padding:8px; border:1px solid #ccc; border-radius:6px;">
+                <option value="">日</option>
+                <script>for(let d=1;d<=31;d++){document.write(`<option value="${d}">${d}日</option>`)}</script>
+              </select>
+            </div>
+            <input type="hidden" name="birthdate" id="birthdate">
               <div class="err-msg" id="err-birthdate">生年月日を入力してください</div>
             </div>
           </div>
@@ -781,7 +795,7 @@
       name:       (fd.get('sei') || '') + '　' + (fd.get('mei') || ''),
       kana:       (fd.get('sei_kana') || '') + '　' + (fd.get('mei_kana') || ''),
       gender:     fd.get('gender'),
-      birthdate:  fd.get('birthdate'),
+      birthdate: (() => { const y=document.getElementById('birthdate_year').value; const m=document.getElementById('birthdate_month').value; const d=document.getElementById('birthdate_day').value; return (y&&m&&d) ? `${y}年${m}月${d}日` : ''; })(),
       phone:      fd.get('phone'),
       email:      fd.get('email'),
       zip:        fd.get('zip'),
