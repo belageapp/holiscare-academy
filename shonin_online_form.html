@@ -817,6 +817,37 @@ disp.textContent = `${y}年${m}月${d}日`;
     document.getElementById('bdp-month').removeEventListener('scroll', onYearMonthScroll);
   }
 
+  // リアルタイムエラー解除
+  document.addEventListener('DOMContentLoaded', function() {
+    // input/select の変更時に赤線を消す
+const fieldErrMap = {
+      'payment': 'err-payment', 'sei': 'err-name', 'mei': 'err-name',
+      'sei_kana': 'err-kana', 'mei_kana': 'err-kana',
+      'phone': 'err-phone', 'email': 'err-email', 'email2': 'err-email2',
+      'zip': 'err-zip', 'address1': 'err-address1'
+    };
+    Object.keys(fieldErrMap).forEach(function(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      ['input','change'].forEach(function(ev) {
+        el.addEventListener(ev, function() {
+          el.classList.remove('err');
+          const errEl = document.getElementById(fieldErrMap[id]);
+          if (errEl) errEl.classList.remove('show');
+          document.getElementById('error-banner').style.display = 'none';
+        });
+      });
+    });
+    // 性別ラジオ変更時
+    document.querySelectorAll('[name="gender"]').forEach(function(el) {
+      el.addEventListener('change', function() {
+        document.querySelectorAll('[name="gender"]').forEach(r => r.closest('label').style.border = '');
+        document.getElementById('err-gender').classList.remove('show');
+      });
+    });
+    // 生年月日ピッカー選択時（closeBdPickerで処理済みのため不要）
+  });
+
   function validate() {
     let ok = true;
     const checks = [
