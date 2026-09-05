@@ -91,6 +91,11 @@ service cloud.firestore {
       allow read, write: if isAdmin();
     }
 
+    // 要注意チェックで「問題なし」にした項目の記録
+    match /dataCheckDismissals/{docId} {
+      allow read, write: if isAdmin();
+    }
+
     // 削除されたapplicationsの控え（監査用・復元可能なアーカイブ）
     match /deletedApplications/{docId} {
       allow read: if isAdmin();

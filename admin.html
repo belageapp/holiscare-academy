@@ -684,6 +684,7 @@
     <div class="sb-scroll">
     <div class="sb-section">メニュー</div>
     <div class="sb-item active" id="menu-applications" onclick="if(window.showSection)window.showSection('applications')"><span class="ico">📋</span>申し込み管理</div>
+    <div class="sb-item" id="menu-alerts" onclick="if(window.showSection)window.showSection('alerts')"><span class="ico">⚠️</span>要注意チェック<span id="alerts-badge" style="display:none;margin-left:auto;background:#F06292;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
     <div class="sb-item" id="menu-notices" onclick="if(window.showSection)window.showSection('notices')"><span class="ico">📢</span>お知らせ管理</div>
     <div class="sb-item" id="menu-textorder" onclick="if(window.showSection)window.showSection('textorder')"><span class="ico">📦</span>テキスト発注<span id="textorder-badge" style="display:none;margin-left:auto;background:#F06292;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
     <div class="sb-item" id="menu-documents" onclick="if(window.showSection)window.showSection('documents')"><span class="ico">🪪</span>書類確認<span id="doc-badge" style="display:none;margin-left:auto;background:#F06292;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
@@ -821,6 +822,30 @@
         </div>
       </div>
       </div><!-- /section-applications -->
+
+      <!-- ===== 要注意チェックセクション ===== -->
+      <div id="section-alerts" style="display:none;">
+        <div class="tcard">
+          <div class="thead">
+            <div class="thead-title">⚠️ 要注意チェック</div>
+            <div class="thead-acts">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-mid);cursor:pointer;border:1.5px dashed #F06292;border-radius:20px;padding:6px 12px;">
+                <input type="checkbox" id="show-test-alerts" onchange="loadAlertsList()" style="cursor:pointer;">🧪 テストデータを表示
+              </label>
+              <select id="alerts-filter-sel" onchange="window.setAlertsFilter(this.value)" style="border:1.5px solid var(--border);border-radius:20px;padding:8px 28px 8px 14px;font-family:'Noto Sans JP',sans-serif;font-size:13px;outline:none;cursor:pointer;appearance:none;background:white url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234A7A85'/%3E%3C/svg%3E&quot;) no-repeat right 10px center;">
+                <option value="all">すべて</option>
+                <option value="dup">重複申込みの疑い</option>
+                <option value="emaildup">メールアドレス重複</option>
+                <option value="nochange">変更届の内容が同一</option>
+                <option value="stall">修了期限超過（停滞中）</option>
+              </select>
+              <button class="refresh-btn" onclick="loadAlertsList()">🔄 更新</button>
+            </div>
+          </div>
+          <div style="padding:12px 16px 0;font-size:12px;color:var(--text-mid);line-height:1.7;">申込みデータの矛盾や見落としやすい点を自動検知して一覧表示します。誤検知や確認済みのものは「✓ 問題なし」で個別に非表示にできます。</div>
+          <div style="padding:16px;"><div id="alerts-list" style="min-height:60px;">読み込み中...</div></div>
+        </div>
+      </div><!-- /section-alerts -->
 
       <!-- ===== お知らせ管理セクション ===== -->
       <div id="section-notices" style="display:none;">
@@ -1255,6 +1280,7 @@
             <!-- クイックジャンプ -->
             <div id="guide-quicknav" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;">
               <button onclick="guideJump('g-applications')"  class="gjump">📋 申し込み管理</button>
+              <button onclick="guideJump('g-alerts')"        class="gjump">⚠️ 要注意チェック</button>
               <button onclick="guideJump('g-notices')"       class="gjump">📢 お知らせ管理</button>
               <button onclick="guideJump('g-textorder')"     class="gjump">📦 テキスト発注</button>
               <button onclick="guideJump('g-documents')"     class="gjump">🪪 書類確認</button>
@@ -1371,6 +1397,34 @@
                   <div class="note">📌 別途郵送先（altAddress）を設定すると、修了証明書の送付先がその住所に変わります。登録住所と異なる送付先がある場合は必ず入力してください。</div>
                   <div class="note">📌 同じメールアドレスで既に有効な申込（キャンセル・退講以外）がある場合、申込フォーム側でエラーとなり送信できません。1つのメールアドレスに複数人分の申込が紐づくとeラーニング進捗が混ざってしまうための仕様です。団体申込などで担当者のメールを使い回したいという相談があった場合は、受講生ごとに別のメールアドレス（個人メール、または担当者メールのエイリアス）を使うようご案内してください。</div>
                   <div class="note">📌 姓と名の区別がない外国籍の受講生は、申込フォームの「姓と名の区別がない名前です」チェックにより、お名前欄が名のみで登録されます（例：「NARMAYANTI　NARMAYANTI」のような重複入力を防止）。</div>
+                </div>
+              </div>
+
+              <!-- 1.5. 要注意チェック -->
+              <div class="guide-section" id="g-alerts">
+                <div class="guide-header" onclick="guideToggle(this)">
+                  <span class="guide-title">⚠️ 要注意チェック</span>
+                  <span style="font-size:18px;color:#aaa;">▼</span>
+                </div>
+                <div class="guide-body">
+                  <p>申込みデータの矛盾や見落としやすい点を自動検知して一覧表示する画面です。一覧を開くたびにその場でチェックが実行されます（バックグラウンドの定期実行ではありません）。</p>
+
+                  <h4>検知ルール</h4>
+                  <table>
+                    <tr><th>種類</th><th>検知条件</th></tr>
+                    <tr><td>重複申込みの疑い</td><td>キャンセル・退講以外の申込み同士で、氏名（完全一致）・電話番号・郵便番号のいずれかが一致する組み合わせ。一致した項目が2つ以上なら「重複の疑い（強）」、1つのみなら「一致あり（参考）」として区別表示されます。</td></tr>
+                    <tr><td>メールアドレス重複</td><td>キャンセル・退講以外の申込みで、同じメールアドレスを使っている組み合わせ。</td></tr>
+                    <tr><td>変更届の内容が同一</td><td>未対応の変更届（届出書一覧）で、提出された住所・氏名・電話番号などの内容が、現在登録されている申込み情報とすべて一致している場合（実質「変更なし」の届出）。</td></tr>
+                    <tr><td>修了期限超過（停滞中）</td><td>ステータスが「受講中」のまま、正式修了期限（受講開始日＋8か月）を過ぎている受講生。</td></tr>
+                  </table>
+
+                  <h4>主な操作</h4>
+                  <ul>
+                    <li><strong>✓ 問題なし</strong>：確認の結果、対応不要と判断した項目を個別に非表示にできます（一度非表示にした項目は再表示されません）</li>
+                    <li><strong>絞り込み</strong>：すべて・検知種類ごとに絞り込み可能</li>
+                    <li><strong>テストデータ表示トグル</strong>：テストデータ（isTest=true）の表示/非表示を切り替えます</li>
+                  </ul>
+                  <div class="note">📌 氏名の一致は表記ゆれ（旧字体・スペースの有無など）を考慮しない完全一致判定です。誤検知（同姓同名の別人など）は「✓ 問題なし」で個別に非表示にしてください。</div>
                 </div>
               </div>
 
@@ -3862,6 +3916,7 @@ async function doLogin() {
   // ===== セクション切り替え =====
   function showSection(section) {
     document.getElementById('section-applications').style.display = section === 'applications' ? 'block' : 'none';
+    document.getElementById('section-alerts').style.display       = section === 'alerts'       ? 'block' : 'none';
     document.getElementById('section-notices').style.display      = section === 'notices'      ? 'block' : 'none';
     document.getElementById('section-textorder').style.display    = section === 'textorder'    ? 'block' : 'none';
     document.getElementById('section-documents').style.display    = section === 'documents'    ? 'block' : 'none';
@@ -3883,6 +3938,7 @@ async function doLogin() {
     document.getElementById('section-mypage-gakusoku').style.display= section === 'mypage-gakusoku'? 'block' : 'none';
     if (section === 'documents') loadDocuments();
     if (section === 'applications') loadData();
+    if (section === 'alerts') loadAlertsList();
     if (section === 'notices') loadNotices();
     if (section === 'venue') loadVenueList();
     if (section === 'facility') loadFacilityList();
@@ -3899,6 +3955,7 @@ async function doLogin() {
     if (section === 'users') loadAdminsList();
     document.getElementById('topbar-title').textContent =
       section === 'applications' ? '📋 申し込み管理' :
+      section === 'alerts'       ? '⚠️ 要注意チェック' :
       section === 'notices'      ? '📢 お知らせ管理' :
       section === 'textorder'    ? '📦 テキスト発注' :
       section === 'documents'    ? '🪪 書類確認' :
@@ -4358,6 +4415,282 @@ async function doLogin() {
     } catch(e) { alert('削除に失敗しました：' + e.message); }
   }
   window.deleteNotice = deleteNotice;
+
+  // ===== 要注意チェック =====
+  const ALERTS_INACTIVE_STATUSES = ['cancelled', 'withdrawn'];
+  function normName(a) { return (a.name || ((a.sei||'')+(a.mei||''))).replace(/\s+/g, ''); }
+  function normPhone(v) { return (v || '').replace(/[^0-9]/g, ''); }
+  function normZip(v) { return (v || '').replace(/[^0-9]/g, ''); }
+  function normEmail(v) { return (v || '').trim().toLowerCase(); }
+
+  function computeDuplicateApplicantIssues(apps) {
+    const active = apps.filter(a => !ALERTS_INACTIVE_STATUSES.includes(a.status || 'pending'));
+    const byName = new Map(), byPhone = new Map(), byZip = new Map();
+    const addTo = (map, key, a) => { if (!key) return; if (!map.has(key)) map.set(key, []); map.get(key).push(a); };
+    active.forEach(a => {
+      addTo(byName, normName(a), a);
+      addTo(byPhone, normPhone(a.phone), a);
+      addTo(byZip, normZip(a.zip), a);
+    });
+    const pairs = new Map();
+    function addPairs(map, label) {
+      for (const list of map.values()) {
+        if (list.length < 2) continue;
+        for (let i = 0; i < list.length; i++) {
+          for (let j = i + 1; j < list.length; j++) {
+            const x = list[i], y = list[j];
+            const key = [x.__id, y.__id].sort().join('|');
+            if (!pairs.has(key)) pairs.set(key, { a: x, b: y, fields: new Set() });
+            pairs.get(key).fields.add(label);
+          }
+        }
+      }
+    }
+    addPairs(byName, '氏名');
+    addPairs(byPhone, '電話番号');
+    addPairs(byZip, '郵便番号');
+    return [...pairs.values()].map(({ a, b, fields }) => ({
+      type: 'dup',
+      key: 'dup:' + [a.__id, b.__id].sort().join('|'),
+      a, b,
+      fields: [...fields],
+      severity: fields.size >= 2 ? 'high' : 'low',
+      isTest: !!(a.isTest || b.isTest),
+    }));
+  }
+
+  function computeEmailDuplicateIssues(apps) {
+    const active = apps.filter(a => !ALERTS_INACTIVE_STATUSES.includes(a.status || 'pending'));
+    const byEmail = new Map();
+    active.forEach(a => {
+      const em = normEmail(a.email);
+      if (!em) return;
+      if (!byEmail.has(em)) byEmail.set(em, []);
+      byEmail.get(em).push(a);
+    });
+    const issues = [];
+    for (const [email, list] of byEmail.entries()) {
+      if (list.length < 2) continue;
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          const a = list[i], b = list[j];
+          issues.push({
+            type: 'emaildup',
+            key: 'emaildup:' + [a.__id, b.__id].sort().join('|'),
+            a, b, email,
+            isTest: !!(a.isTest || b.isTest),
+          });
+        }
+      }
+    }
+    return issues;
+  }
+
+  function computeStalledIssues(apps) {
+    const now = new Date();
+    const issues = [];
+    apps.forEach(a => {
+      if (a.status !== 'active') return;
+      const activeAt = a.activeAt?.toDate?.();
+      if (!activeAt) return;
+      const deadline = new Date(activeAt);
+      deadline.setMonth(deadline.getMonth() + 8);
+      if (now > deadline) {
+        issues.push({
+          type: 'stall',
+          key: 'stall:' + a.__id,
+          a, deadline,
+          isTest: !!a.isTest,
+        });
+      }
+    });
+    return issues;
+  }
+
+  async function computeNoChangeIssues() {
+    const { collectionGroup, getDocs, query, orderBy } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const snap = await getDocs(query(collectionGroup(window.__db, 'todoke'), orderBy('createdAt', 'desc')));
+    const issues = [];
+    for (const d of snap.docs) {
+      const t = d.data();
+      if (t.type !== '変更届' || t.status === 'done') continue;
+      const appId = d.ref.parent.parent.id;
+      const appSnap = await window.__getDoc(window.__doc(window.__db, 'applications', appId));
+      if (!appSnap.exists()) continue;
+      const a = { __id: appId, ...appSnap.data() };
+      const f = t.fields || {};
+      const checks = [
+        [f.sei, a.sei], [f.mei, a.mei],
+        [f.zip, a.zip], [f.address, a.address], [f.address2, a.address2],
+        [f.altZip, a.altZip], [f.altAddress, a.altAddress], [f.altAddress2, a.altAddress2],
+        [f.phone, a.phone], [f.email, a.email],
+      ];
+      const provided = checks.filter(([nv]) => nv !== undefined && nv !== '');
+      if (!provided.length) continue;
+      const allSame = provided.every(([nv, cv]) => (nv || '').trim() === (cv || '').trim());
+      if (allSame) {
+        issues.push({
+          type: 'nochange',
+          key: 'nochange:' + appId + ':' + d.id,
+          appId, todId: d.id, a,
+          name: a.name || ((a.sei||'')+(a.mei||'')),
+          date: t.createdAt?.toDate?.()?.toLocaleDateString('ja-JP') || '—',
+          isTest: !!a.isTest,
+        });
+      }
+    }
+    return issues;
+  }
+
+  let __alertsCache = { dup: [], emaildup: [], nochange: [], stall: [] };
+  let __alertsFilter = 'all';
+
+  function setAlertsFilter(f) {
+    __alertsFilter = f;
+    const sel = document.getElementById('alerts-filter-sel');
+    if (sel) sel.value = f;
+    renderAlertsList();
+  }
+  window.setAlertsFilter = setAlertsFilter;
+
+  async function dismissAlert(key) {
+    if (!confirm('この項目を「問題なし」として非表示にしますか？')) return;
+    try {
+      await window.__setDoc(window.__doc(window.__db, 'dataCheckDismissals', key), {
+        dismissedAt: window.__serverTs(),
+        dismissedBy: window.__auth.currentUser?.email || '',
+      });
+      loadAlertsList();
+    } catch(e) { alert('エラー：' + e.message); }
+  }
+  window.dismissAlert = dismissAlert;
+
+  function renderAlertsList() {
+    const el = document.getElementById('alerts-list');
+    const showTest = document.getElementById('show-test-alerts')?.checked;
+    const filt = (arr) => arr.filter(x => showTest || !x.isTest);
+
+    const dup = filt(__alertsCache.dup);
+    const emaildup = filt(__alertsCache.emaildup);
+    const nochange = filt(__alertsCache.nochange);
+    const stall = filt(__alertsCache.stall);
+
+    const badge = document.getElementById('alerts-badge');
+    if (badge) {
+      const badgeCount = __alertsCache.dup.filter(x=>!x.isTest).length
+        + __alertsCache.emaildup.filter(x=>!x.isTest).length
+        + __alertsCache.nochange.filter(x=>!x.isTest).length
+        + __alertsCache.stall.filter(x=>!x.isTest).length;
+      if (badgeCount > 0) { badge.style.display = 'inline'; badge.textContent = badgeCount; }
+      else { badge.style.display = 'none'; }
+    }
+
+    const showDup      = __alertsFilter === 'all' || __alertsFilter === 'dup';
+    const showEmailDup = __alertsFilter === 'all' || __alertsFilter === 'emaildup';
+    const showNoChange = __alertsFilter === 'all' || __alertsFilter === 'nochange';
+    const showStall    = __alertsFilter === 'all' || __alertsFilter === 'stall';
+
+    function personLine(a) {
+      const name = a.name || ((a.sei||'')+(a.mei||'')) || '—';
+      return `<strong>${name}</strong>（${a.studentNo||'受講番号なし'}）<span style="color:#888;">${a.email||''}</span>`;
+    }
+
+    function dupCard(x) {
+      const style = x.severity === 'high'
+        ? { bg: '#FDECEA', border: '#F5C6C0', color: '#C62828', label: '重複の疑い（強）' }
+        : { bg: '#FFF8E1', border: '#FDE68A', color: '#F57C00', label: '一致あり（参考）' };
+      return `<div style="background:white;border:1px solid ${style.border};border-left:4px solid ${style.color};border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+          <span style="background:${style.bg};color:${style.color};padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">${style.label}：${x.fields.join('・')}が一致</span>
+          <button onclick="dismissAlert('${x.key}')" style="padding:5px 12px;background:none;border:1.5px solid var(--border);color:var(--text-mid);border-radius:6px;font-size:12px;cursor:pointer;">✓ 問題なし</button>
+        </div>
+        <div style="font-size:13px;line-height:2;">
+          ・${personLine(x.a)}<br>
+          ・${personLine(x.b)}
+        </div>
+      </div>`;
+    }
+
+    function emailDupCard(x) {
+      return `<div style="background:white;border:1px solid #F5C6C0;border-left:4px solid #C62828;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+          <span style="background:#FDECEA;color:#C62828;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">メールアドレス重複：${x.email}</span>
+          <button onclick="dismissAlert('${x.key}')" style="padding:5px 12px;background:none;border:1.5px solid var(--border);color:var(--text-mid);border-radius:6px;font-size:12px;cursor:pointer;">✓ 問題なし</button>
+        </div>
+        <div style="font-size:13px;line-height:2;">
+          ・${personLine(x.a)}<br>
+          ・${personLine(x.b)}
+        </div>
+      </div>`;
+    }
+
+    function noChangeCard(x) {
+      return `<div style="background:white;border:1px solid var(--border);border-left:4px solid #757575;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+          <span style="background:#F4F6F8;color:#757575;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">変更届の内容が現在の登録情報と同一（${x.date}提出）</span>
+          <button onclick="dismissAlert('${x.key}')" style="padding:5px 12px;background:none;border:1.5px solid var(--border);color:var(--text-mid);border-radius:6px;font-size:12px;cursor:pointer;">✓ 問題なし</button>
+        </div>
+        <div style="font-size:13px;">・${personLine(x.a)}</div>
+      </div>`;
+    }
+
+    function stallCard(x) {
+      const dl = x.deadline.toLocaleDateString('ja-JP');
+      return `<div style="background:white;border:1px solid var(--border);border-left:4px solid #E8A020;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+          <span style="background:#FFF8E1;color:#E8A020;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">修了期限（${dl}）を過ぎても受講中のまま</span>
+          <button onclick="dismissAlert('${x.key}')" style="padding:5px 12px;background:none;border:1.5px solid var(--border);color:var(--text-mid);border-radius:6px;font-size:12px;cursor:pointer;">✓ 問題なし</button>
+        </div>
+        <div style="font-size:13px;">・${personLine(x.a)}</div>
+      </div>`;
+    }
+
+    let html = '';
+    if (showDup) {
+      html += `<div style="padding:8px 14px;background:#FDECEA;color:#C62828;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 重複申込みの疑い（${dup.length}件）</div>`;
+      html += dup.length ? dup.map(dupCard).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
+    }
+    if (showEmailDup) {
+      html += `<div style="padding:8px 14px;background:#FDECEA;color:#C62828;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ メールアドレス重複（${emaildup.length}件）</div>`;
+      html += emaildup.length ? emaildup.map(emailDupCard).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
+    }
+    if (showNoChange) {
+      html += `<div style="padding:8px 14px;background:#F4F6F8;color:#757575;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 変更届の内容が同一（${nochange.length}件）</div>`;
+      html += nochange.length ? nochange.map(noChangeCard).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
+    }
+    if (showStall) {
+      html += `<div style="padding:8px 14px;background:#FFF8E1;color:#E8A020;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 修了期限超過（停滞中）（${stall.length}件）</div>`;
+      html += stall.length ? stall.map(stallCard).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
+    }
+    el.innerHTML = html || '<p style="color:var(--text-light);font-size:13px;">検知された項目はありません。</p>';
+  }
+  window.renderAlertsList = renderAlertsList;
+
+  async function loadAlertsList() {
+    const el = document.getElementById('alerts-list');
+    el.innerHTML = '読み込み中...';
+    try {
+      const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const [appsSnap, dismissSnap, nochangeIssues] = await Promise.all([
+        getDocs(collection(window.__db, 'applications')),
+        getDocs(collection(window.__db, 'dataCheckDismissals')),
+        computeNoChangeIssues(),
+      ]);
+      const apps = appsSnap.docs.map(d => ({ __id: d.id, ...d.data() }));
+      const dismissed = new Set(dismissSnap.docs.map(d => d.id));
+
+      const dup = computeDuplicateApplicantIssues(apps).filter(x => !dismissed.has(x.key));
+      const emaildup = computeEmailDuplicateIssues(apps).filter(x => !dismissed.has(x.key));
+      const stall = computeStalledIssues(apps).filter(x => !dismissed.has(x.key));
+      const nochange = nochangeIssues.filter(x => !dismissed.has(x.key));
+
+      __alertsCache = { dup, emaildup, nochange, stall };
+      renderAlertsList();
+    } catch(e) {
+      el.innerHTML = '<p style="color:red;">読み込みエラー：' + e.message + '</p>';
+    }
+  }
+  window.loadAlertsList = loadAlertsList;
 
   // 書類確認
   async function loadDocuments() {
