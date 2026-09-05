@@ -7744,17 +7744,36 @@ async function doLogin() {
   async function initAllBadges() {
     try {
       const { collection, getDocs, query, where, orderBy, collectionGroup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const appsSnap = await getDocs(collection(window.__db, 'applications'));
 
       // テキスト発注：発注待ち
       try {
-        const snap = await getDocs(query(collection(window.__db, 'applications'), orderBy('createdAt', 'desc')));
-        const count = snap.docs.filter(d => {
+        const count = appsSnap.docs.filter(d => {
           const a = d.data();
           const tb = a.textbook || '';
           return (tb === 'purchase' || tb === '購入（6,600円）') && !a.textOrdered && !a.isTest;
         }).length;
         const badge = document.getElementById('textorder-badge');
         if (badge && count > 0) { badge.style.display = 'inline'; badge.textContent = count; }
+      } catch(e) {}
+
+      // 要注意チェック：重複申込み・メール重複・変更届内容同一・修了期限
+      try {
+        const apps = appsSnap.docs.map(d => ({ __id: d.id, ...d.data() }));
+        const dismissSnap = await getDocs(collection(window.__db, 'dataCheckDismissals'));
+        const dismissed = new Set(dismissSnap.docs.map(d => d.id));
+        const nochangeIssues = await computeNoChangeIssues();
+        const { tempIssues, formalIssues } = computeDeadlineIssues(apps);
+        const count = [
+          ...computeDuplicateApplicantIssues(apps),
+          ...computeEmailDuplicateIssues(apps),
+          ...nochangeIssues,
+          ...tempIssues,
+          ...formalIssues,
+        ].filter(x => !x.isTest && !dismissed.has(x.key)).length;
+        const badge = document.getElementById('alerts-badge');
+        if (badge && count > 0) { badge.style.display = 'inline'; badge.textContent = count; }
+        else if (badge) badge.style.display = 'none';
       } catch(e) {}
 
       // 問い合わせ：未回答
