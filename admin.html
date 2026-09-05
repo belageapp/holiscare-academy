@@ -1424,7 +1424,7 @@
                     <li><strong>絞り込み</strong>：すべて・検知種類ごとに絞り込み可能</li>
                     <li><strong>テストデータ表示トグル</strong>：テストデータ（isTest=true）の表示/非表示を切り替えます</li>
                   </ul>
-                  <div class="note">📌 氏名の一致は表記ゆれ（旧字体・スペースの有無など）を考慮しない完全一致判定です。誤検知（同姓同名の別人など）は「✓ 問題なし」で個別に非表示にしてください。</div>
+                  <div class="note">📌 氏名の一致は表記ゆれ（旧字体・スペースの有無など）を考慮しない完全一致判定です。住所・郵便番号は、ハイフン表記／「丁目・番・号」表記／全角半角／スペースの違いを吸収して比較するため、表記が違っていても実質同じ住所なら一致として検知されます。誤検知（同姓同名の別人など）は「✓ 問題なし」で個別に非表示にしてください。</div>
                 </div>
               </div>
 
@@ -4420,8 +4420,19 @@ async function doLogin() {
   const ALERTS_INACTIVE_STATUSES = ['cancelled', 'withdrawn'];
   function normName(a) { return (a.name || ((a.sei||'')+(a.mei||''))).replace(/\s+/g, ''); }
   function normPhone(v) { return (v || '').replace(/[^0-9]/g, ''); }
-  function normAddress(a) { return ((a.address||'')+(a.address2||'')).replace(/\s+/g, ''); }
+  function normDigits(v) { return (v || '').replace(/[^0-9]/g, ''); }
   function normEmail(v) { return (v || '').trim().toLowerCase(); }
+  // 住所の表記ゆれ（半角/全角、ハイフンvs丁目番号表記、スペース、部屋番号の「号室」等）を吸収するため、
+  // 区切り文字・区切り語をすべて除去し、数字と地名だけを残した文字列で比較する
+  function normAddrParts(addr, addr2) {
+    let s = (addr || '') + (addr2 || '');
+    s = s.replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)); // 全角数字→半角
+    s = s.replace(/[-－ー−‐―]/g, ''); // ハイフン類を除去
+    s = s.replace(/丁目|番地の|番地|番|号室|号棟|号/g, ''); // 住所の区切り語を除去
+    s = s.replace(/\s+/g, ''); // 空白を除去
+    return s;
+  }
+  function normAddress(a) { return normAddrParts(a.address, a.address2); }
 
   function computeDuplicateApplicantIssues(apps) {
     const active = apps.filter(a => !ALERTS_INACTIVE_STATUSES.includes(a.status || 'pending'));
@@ -4522,10 +4533,13 @@ async function doLogin() {
       // aの氏名は分割sei/meiを持たずnameのみのことが多いため、氏名は結合した文字列同士で比較する
       const curName = (a.name || ((a.sei||'')+(a.mei||''))).replace(/\s+/g, '');
       const newName = ((f.sei||'')+(f.mei||'')).replace(/\s+/g, '');
+      // 住所・郵便番号は表記ゆれ（ハイフンvs丁目番号表記、スペース等）を吸収して比較する
       const checks = [
         [newName || undefined, curName],
-        [f.zip, a.zip], [f.address, a.address], [f.address2, a.address2],
-        [f.altZip, a.altZip], [f.altAddress, a.altAddress], [f.altAddress2, a.altAddress2],
+        [normDigits(f.zip) || undefined, normDigits(a.zip)],
+        [normAddrParts(f.address, f.address2) || undefined, normAddrParts(a.address, a.address2)],
+        [normDigits(f.altZip) || undefined, normDigits(a.altZip)],
+        [normAddrParts(f.altAddress, f.altAddress2) || undefined, normAddrParts(a.altAddress, a.altAddress2)],
         [f.phone, a.phone], [f.email, a.email],
       ];
       const provided = checks.filter(([nv]) => nv !== undefined && nv !== '');
