@@ -837,7 +837,8 @@
                 <option value="dup">重複申込みの疑い</option>
                 <option value="emaildup">メールアドレス重複</option>
                 <option value="nochange">変更届の内容が同一</option>
-                <option value="stall">修了期限超過（停滞中）</option>
+                <option value="tempdeadline">仮修了期限が近い／超過</option>
+                <option value="formaldeadline">正式修了期限が近い／超過</option>
               </select>
               <button class="refresh-btn" onclick="loadAlertsList()">🔄 更新</button>
             </div>
@@ -1415,7 +1416,8 @@
                     <tr><td>重複申込みの疑い</td><td>キャンセル・退講以外の申込み同士で、氏名（完全一致）・電話番号・住所のいずれかが一致する組み合わせ。一致した項目が2つ以上なら「重複の疑い（強）」、1つのみなら「一致あり（参考）」として区別表示されます。</td></tr>
                     <tr><td>メールアドレス重複</td><td>キャンセル・退講以外の申込みで、同じメールアドレスを使っている組み合わせ。</td></tr>
                     <tr><td>変更届の内容が同一</td><td>未対応の変更届（届出書一覧）で、提出された住所・氏名・電話番号などの内容が、現在登録されている申込み情報とすべて一致している場合（実質「変更なし」の届出）。</td></tr>
-                    <tr><td>修了期限超過（停滞中）</td><td>ステータスが「受講中」のまま、正式修了期限（受講開始日＋8か月）を過ぎている受講生。</td></tr>
+                    <tr><td>仮修了期限が近い／超過</td><td>ステータスが「受講中」かつテスト２未合格で、仮修了期限（受講開始日＋3か月）まで残り30日以内、または既に超過している受講生。</td></tr>
+                    <tr><td>正式修了期限が近い／超過</td><td>ステータスが「受講中」かつOJT承認・修了レポート承認・OJT書類受領のいずれかが未完了で、正式修了期限（受講開始日＋8か月）まで残り30日以内、または既に超過している受講生。</td></tr>
                   </table>
 
                   <h4>主な操作</h4>
@@ -1425,6 +1427,7 @@
                     <li><strong>テストデータ表示トグル</strong>：テストデータ（isTest=true）の表示/非表示を切り替えます</li>
                   </ul>
                   <div class="note">📌 氏名の一致は表記ゆれ（旧字体・スペースの有無など）を考慮しない完全一致判定です。住所・郵便番号は、ハイフン表記／「丁目・番・号」表記／全角半角／スペースの違いを吸収して比較するため、表記が違っていても実質同じ住所なら一致として検知されます。誤検知（同姓同名の別人など）は「✓ 問題なし」で個別に非表示にしてください。</div>
+                  <div class="note">📌 仮修了・正式修了の期限アラートは、受講生本人にはすでに「自動通知設定」から期限前にメールが送られていますが（仮修了：30・14・7・3・1日前／正式修了：30・14日前）、こちらは事務局側が一覧でまとめて把握・フォローするための画面です。</div>
                 </div>
               </div>
 
@@ -4497,25 +4500,51 @@ async function doLogin() {
     return issues;
   }
 
-  function computeStalledIssues(apps) {
+  const DEADLINE_ALERT_DAYS_BEFORE = 30;
+
+  function computeDeadlineIssues(apps) {
     const now = new Date();
-    const issues = [];
+    const tempIssues = [], formalIssues = [];
     apps.forEach(a => {
       if (a.status !== 'active') return;
       const activeAt = a.activeAt?.toDate?.();
       if (!activeAt) return;
-      const deadline = new Date(activeAt);
-      deadline.setMonth(deadline.getMonth() + 8);
-      if (now > deadline) {
-        issues.push({
-          type: 'stall',
-          key: 'stall:' + a.__id,
-          a, deadline,
-          isTest: !!a.isTest,
-        });
+
+      // 仮修了期限（受講開始＋3か月）：テスト２未合格の受講生
+      if (a.test2Passed !== true) {
+        const deadline = new Date(activeAt);
+        deadline.setMonth(deadline.getMonth() + 3);
+        const alertFrom = new Date(deadline);
+        alertFrom.setDate(alertFrom.getDate() - DEADLINE_ALERT_DAYS_BEFORE);
+        if (now >= alertFrom) {
+          tempIssues.push({
+            type: 'tempdeadline',
+            key: 'tempdeadline:' + a.__id,
+            a, deadline,
+            overdue: now > deadline,
+            isTest: !!a.isTest,
+          });
+        }
+      }
+
+      // 正式修了期限（受講開始＋8か月）：OJT承認・レポート承認・OJT書類受領のいずれか未完了の受講生
+      if (!(a.ojtPassed === true && a.reportApproved === true && a.facilityReported === true)) {
+        const deadline = new Date(activeAt);
+        deadline.setMonth(deadline.getMonth() + 8);
+        const alertFrom = new Date(deadline);
+        alertFrom.setDate(alertFrom.getDate() - DEADLINE_ALERT_DAYS_BEFORE);
+        if (now >= alertFrom) {
+          formalIssues.push({
+            type: 'formaldeadline',
+            key: 'formaldeadline:' + a.__id,
+            a, deadline,
+            overdue: now > deadline,
+            isTest: !!a.isTest,
+          });
+        }
       }
     });
-    return issues;
+    return { tempIssues, formalIssues };
   }
 
   async function computeNoChangeIssues() {
@@ -4559,7 +4588,7 @@ async function doLogin() {
     return issues;
   }
 
-  let __alertsCache = { dup: [], emaildup: [], nochange: [], stall: [] };
+  let __alertsCache = { dup: [], emaildup: [], nochange: [], tempdeadline: [], formaldeadline: [] };
   let __alertsFilter = 'all';
 
   function setAlertsFilter(f) {
@@ -4590,22 +4619,25 @@ async function doLogin() {
     const dup = filt(__alertsCache.dup);
     const emaildup = filt(__alertsCache.emaildup);
     const nochange = filt(__alertsCache.nochange);
-    const stall = filt(__alertsCache.stall);
+    const tempdeadline = filt(__alertsCache.tempdeadline);
+    const formaldeadline = filt(__alertsCache.formaldeadline);
 
     const badge = document.getElementById('alerts-badge');
     if (badge) {
       const badgeCount = __alertsCache.dup.filter(x=>!x.isTest).length
         + __alertsCache.emaildup.filter(x=>!x.isTest).length
         + __alertsCache.nochange.filter(x=>!x.isTest).length
-        + __alertsCache.stall.filter(x=>!x.isTest).length;
+        + __alertsCache.tempdeadline.filter(x=>!x.isTest).length
+        + __alertsCache.formaldeadline.filter(x=>!x.isTest).length;
       if (badgeCount > 0) { badge.style.display = 'inline'; badge.textContent = badgeCount; }
       else { badge.style.display = 'none'; }
     }
 
-    const showDup      = __alertsFilter === 'all' || __alertsFilter === 'dup';
-    const showEmailDup = __alertsFilter === 'all' || __alertsFilter === 'emaildup';
-    const showNoChange = __alertsFilter === 'all' || __alertsFilter === 'nochange';
-    const showStall    = __alertsFilter === 'all' || __alertsFilter === 'stall';
+    const showDup           = __alertsFilter === 'all' || __alertsFilter === 'dup';
+    const showEmailDup      = __alertsFilter === 'all' || __alertsFilter === 'emaildup';
+    const showNoChange      = __alertsFilter === 'all' || __alertsFilter === 'nochange';
+    const showTempDeadline  = __alertsFilter === 'all' || __alertsFilter === 'tempdeadline';
+    const showFormalDeadline= __alertsFilter === 'all' || __alertsFilter === 'formaldeadline';
 
     function personLine(a) {
       const name = a.name || ((a.sei||'')+(a.mei||'')) || '—';
@@ -4651,11 +4683,17 @@ async function doLogin() {
       </div>`;
     }
 
-    function stallCard(x) {
+    function deadlineCard(x, deadlineLabel) {
       const dl = x.deadline.toLocaleDateString('ja-JP');
-      return `<div style="background:white;border:1px solid var(--border);border-left:4px solid #E8A020;border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+      const diffDays = Math.round((x.deadline - new Date()) / 86400000);
+      const statusText = x.overdue
+        ? `${deadlineLabel}（${dl}）を${Math.abs(diffDays)}日超過`
+        : `${deadlineLabel}（${dl}）まで残り${diffDays}日`;
+      const color = x.overdue ? '#C62828' : '#E8A020';
+      const bg = x.overdue ? '#FDECEA' : '#FFF8E1';
+      return `<div style="background:white;border:1px solid var(--border);border-left:4px solid ${color};border-radius:10px;padding:14px 16px;margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
-          <span style="background:#FFF8E1;color:#E8A020;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">修了期限（${dl}）を過ぎても受講中のまま</span>
+          <span style="background:${bg};color:${color};padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">${statusText}</span>
           <button onclick="dismissAlert('${x.key}')" style="padding:5px 12px;background:none;border:1.5px solid var(--border);color:var(--text-mid);border-radius:6px;font-size:12px;cursor:pointer;">✓ 問題なし</button>
         </div>
         <div style="font-size:13px;">・${personLine(x.a)}</div>
@@ -4675,9 +4713,13 @@ async function doLogin() {
       html += `<div style="padding:8px 14px;background:#F4F6F8;color:#757575;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 変更届の内容が同一（${nochange.length}件）</div>`;
       html += nochange.length ? nochange.map(noChangeCard).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
     }
-    if (showStall) {
-      html += `<div style="padding:8px 14px;background:#FFF8E1;color:#E8A020;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 修了期限超過（停滞中）（${stall.length}件）</div>`;
-      html += stall.length ? stall.map(stallCard).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
+    if (showTempDeadline) {
+      html += `<div style="padding:8px 14px;background:#FFF8E1;color:#E8A020;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 仮修了期限が近い／超過（${tempdeadline.length}件）</div>`;
+      html += tempdeadline.length ? tempdeadline.map(x => deadlineCard(x, '仮修了期限')).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
+    }
+    if (showFormalDeadline) {
+      html += `<div style="padding:8px 14px;background:#FFF8E1;color:#E8A020;border-radius:8px;font-size:13px;font-weight:700;margin-bottom:10px;">▼ 正式修了期限が近い／超過（${formaldeadline.length}件）</div>`;
+      html += formaldeadline.length ? formaldeadline.map(x => deadlineCard(x, '正式修了期限')).join('') : '<p style="color:var(--text-light);font-size:13px;margin-bottom:16px;">該当なし。</p>';
     }
     el.innerHTML = html || '<p style="color:var(--text-light);font-size:13px;">検知された項目はありません。</p>';
   }
@@ -4698,10 +4740,12 @@ async function doLogin() {
 
       const dup = computeDuplicateApplicantIssues(apps).filter(x => !dismissed.has(x.key));
       const emaildup = computeEmailDuplicateIssues(apps).filter(x => !dismissed.has(x.key));
-      const stall = computeStalledIssues(apps).filter(x => !dismissed.has(x.key));
+      const { tempIssues, formalIssues } = computeDeadlineIssues(apps);
+      const tempdeadline = tempIssues.filter(x => !dismissed.has(x.key));
+      const formaldeadline = formalIssues.filter(x => !dismissed.has(x.key));
       const nochange = nochangeIssues.filter(x => !dismissed.has(x.key));
 
-      __alertsCache = { dup, emaildup, nochange, stall };
+      __alertsCache = { dup, emaildup, nochange, tempdeadline, formaldeadline };
       renderAlertsList();
     } catch(e) {
       el.innerHTML = '<p style="color:red;">読み込みエラー：' + e.message + '</p>';
