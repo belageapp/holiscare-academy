@@ -1412,7 +1412,7 @@
                   <h4>検知ルール</h4>
                   <table>
                     <tr><th>種類</th><th>検知条件</th></tr>
-                    <tr><td>重複申込みの疑い</td><td>キャンセル・退講以外の申込み同士で、氏名（完全一致）・電話番号・郵便番号のいずれかが一致する組み合わせ。一致した項目が2つ以上なら「重複の疑い（強）」、1つのみなら「一致あり（参考）」として区別表示されます。</td></tr>
+                    <tr><td>重複申込みの疑い</td><td>キャンセル・退講以外の申込み同士で、氏名（完全一致）・電話番号・住所のいずれかが一致する組み合わせ。一致した項目が2つ以上なら「重複の疑い（強）」、1つのみなら「一致あり（参考）」として区別表示されます。</td></tr>
                     <tr><td>メールアドレス重複</td><td>キャンセル・退講以外の申込みで、同じメールアドレスを使っている組み合わせ。</td></tr>
                     <tr><td>変更届の内容が同一</td><td>未対応の変更届（届出書一覧）で、提出された住所・氏名・電話番号などの内容が、現在登録されている申込み情報とすべて一致している場合（実質「変更なし」の届出）。</td></tr>
                     <tr><td>修了期限超過（停滞中）</td><td>ステータスが「受講中」のまま、正式修了期限（受講開始日＋8か月）を過ぎている受講生。</td></tr>
@@ -4420,17 +4420,17 @@ async function doLogin() {
   const ALERTS_INACTIVE_STATUSES = ['cancelled', 'withdrawn'];
   function normName(a) { return (a.name || ((a.sei||'')+(a.mei||''))).replace(/\s+/g, ''); }
   function normPhone(v) { return (v || '').replace(/[^0-9]/g, ''); }
-  function normZip(v) { return (v || '').replace(/[^0-9]/g, ''); }
+  function normAddress(a) { return ((a.address||'')+(a.address2||'')).replace(/\s+/g, ''); }
   function normEmail(v) { return (v || '').trim().toLowerCase(); }
 
   function computeDuplicateApplicantIssues(apps) {
     const active = apps.filter(a => !ALERTS_INACTIVE_STATUSES.includes(a.status || 'pending'));
-    const byName = new Map(), byPhone = new Map(), byZip = new Map();
+    const byName = new Map(), byPhone = new Map(), byAddress = new Map();
     const addTo = (map, key, a) => { if (!key) return; if (!map.has(key)) map.set(key, []); map.get(key).push(a); };
     active.forEach(a => {
       addTo(byName, normName(a), a);
       addTo(byPhone, normPhone(a.phone), a);
-      addTo(byZip, normZip(a.zip), a);
+      addTo(byAddress, normAddress(a), a);
     });
     const pairs = new Map();
     function addPairs(map, label) {
@@ -4448,7 +4448,7 @@ async function doLogin() {
     }
     addPairs(byName, '氏名');
     addPairs(byPhone, '電話番号');
-    addPairs(byZip, '郵便番号');
+    addPairs(byAddress, '住所');
     return [...pairs.values()].map(({ a, b, fields }) => ({
       type: 'dup',
       key: 'dup:' + [a.__id, b.__id].sort().join('|'),
@@ -4519,8 +4519,11 @@ async function doLogin() {
       if (!appSnap.exists()) continue;
       const a = { __id: appId, ...appSnap.data() };
       const f = t.fields || {};
+      // aの氏名は分割sei/meiを持たずnameのみのことが多いため、氏名は結合した文字列同士で比較する
+      const curName = (a.name || ((a.sei||'')+(a.mei||''))).replace(/\s+/g, '');
+      const newName = ((f.sei||'')+(f.mei||'')).replace(/\s+/g, '');
       const checks = [
-        [f.sei, a.sei], [f.mei, a.mei],
+        [newName || undefined, curName],
         [f.zip, a.zip], [f.address, a.address], [f.address2, a.address2],
         [f.altZip, a.altZip], [f.altAddress, a.altAddress], [f.altAddress2, a.altAddress2],
         [f.phone, a.phone], [f.email, a.email],
