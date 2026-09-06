@@ -6214,7 +6214,7 @@ async function doLogin() {
         if (badgeCount > 0) { badge.style.display = 'inline'; badge.textContent = badgeCount; }
         else { badge.style.display = 'none'; }
       }
-      if (snap.empty) { el.innerHTML = '<p style="color:var(--text-light);font-size:13px;">対象者はいません。</p>'; return; }
+      if (snap.empty) { el.innerHTML = '<p style="color:var(--text-light);font-size:13px;padding:16px;">対象者はいません。</p>'; return; }
       const showTest = document.getElementById('show-test-tempcert')?.checked;
       const pending = [], sent = [];
       window.__tempCertCache = {};
@@ -6787,7 +6787,7 @@ async function doLogin() {
     if (showIssued   && issued.length)   body += `<tr><td colspan="10" style="padding:8px 14px;background:#F4F6F8;font-size:12px;color:#888;">▼ 発行済み (${issued.length}件)</td></tr>` + issued.map(rowHtml).join('');
 
     if (!body) {
-      el.innerHTML = '<p style="color:var(--text-light);font-size:13px;">' +
+      el.innerHTML = '<p style="color:var(--text-light);font-size:13px;padding:16px;">' +
         (__certificateFilter === 'issuable' ? '発行可能な対象者はいません。' :
          __certificateFilter === 'waiting'  ? '条件待ちの対象者はいません。' :
          __certificateFilter === 'issued'   ? '発行済みの対象者はいません。' : '対象者はいません。') + '</p>';
