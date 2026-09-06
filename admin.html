@@ -3712,7 +3712,7 @@ async function doLogin() {
       return `<tr style="border-bottom:1px solid var(--border);${isDone ? 'opacity:0.7;' : ''}">
           <td style="padding:10px 14px;">${date}</td>
           <td style="padding:10px 14px;font-weight:700;color:var(--teal-dark);">${a.studentNo||'—'}</td>
-          <td style="padding:10px 14px;font-weight:700;">${a.name || ((a.sei||'')+(a.mei||'')) || '—'}<br><span style="font-size:11px;color:#888;font-weight:400;">${(a.seiFuri||a.meiFuri) ? (a.seiFuri||'')+(a.meiFuri||'') : (a.kana||'')}</span><br><button onclick="openDetail('${a.id}')" class="detail-btn" style="margin-top:4px;">詳細</button></td>
+          <td style="padding:10px 14px;font-weight:700;"><button onclick="openDetail('${a.id}')" class="detail-btn" style="padding:2px 10px;font-size:11px;font-weight:700;margin-right:6px;">詳細</button>${a.name || ((a.sei||'')+(a.mei||'')) || '—'}<br><span style="font-size:11px;color:#888;font-weight:400;">${(a.seiFuri||a.meiFuri) ? (a.seiFuri||'')+(a.meiFuri||'') : (a.kana||'')}</span></td>
           <td style="padding:10px 14px;">${a.phone||'—'}</td>
           <td style="padding:10px 14px;">${deliveryAddr}</td>
           <td style="padding:10px 14px;">
@@ -6006,7 +6006,7 @@ async function doLogin() {
             const doneAt    = d.externalVideoDoneAt?.toDate?.()?.toLocaleString('ja-JP') || '—';
             if (d.externalVideoDone) {
               return `<tr style="border-bottom:1px solid #eee;">
-                <td style="padding:10px 12px;">${name}<br><button onclick="openDetail('${d.__id}')" class="detail-btn" style="margin-top:4px;">詳細</button></td>
+                <td style="padding:10px 12px;"><button onclick="openDetail('${d.__id}')" class="detail-btn" style="padding:2px 10px;font-size:11px;margin-right:6px;">詳細</button>${name}</td>
                 <td style="padding:10px 12px;">${pendingAt}</td>
                 <td style="padding:10px 12px;"><span style="background:#e8f5e9;color:#2e7d32;border-radius:12px;padding:2px 10px;font-size:12px;font-weight:600;">✓ 承認済み</span><br><span style="font-size:11px;color:#888;">${doneAt}</span></td>
                 <td style="padding:10px 12px;">
@@ -6015,7 +6015,7 @@ async function doLogin() {
               </tr>`;
             } else {
               return `<tr style="border-bottom:1px solid #eee;background:#fffde7;">
-                <td style="padding:10px 12px;">${name}<br><button onclick="openDetail('${d.__id}')" class="detail-btn" style="margin-top:4px;">詳細</button></td>
+                <td style="padding:10px 12px;"><button onclick="openDetail('${d.__id}')" class="detail-btn" style="padding:2px 10px;font-size:11px;margin-right:6px;">詳細</button>${name}</td>
                 <td style="padding:10px 12px;">${pendingAt}</td>
                 <td style="padding:10px 12px;"><span style="background:#fff3e0;color:#e65100;border-radius:12px;padding:2px 10px;font-size:12px;font-weight:600;">⏳ 承認待ち</span></td>
                 <td style="padding:10px 12px;display:flex;gap:8px;">
@@ -6241,7 +6241,7 @@ async function doLogin() {
             : '<span style="font-size:11px;color:#ccc;">未発行</span>';
           return `<tr>
             <td><input type="checkbox" class="cert-select-cb" data-id="${a.id}"></td>
-            <td><strong>${name}</strong><br><span style="font-size:11px;color:#888;">${a.email||''}</span><br><button onclick="openDetail('${a.id}')" class="detail-btn" style="margin-top:4px;">詳細</button></td>
+            <td><button onclick="openDetail('${a.id}')" class="detail-btn" style="padding:2px 10px;font-size:11px;margin-right:6px;">詳細</button><strong>${name}</strong><br><span style="font-size:11px;color:#888;">${a.email||''}</span></td>
             <td>${a.studentNo||'—'}</td>
             <td>${a.zip ? '〒'+a.zip+'　' : ''}${a.address||''}${a.address2||''}</td>
             <td>${passedDate}</td>
@@ -6755,7 +6755,7 @@ async function doLogin() {
           <button onclick="printSingleFormalCert('${d_id}','card')" style="padding:5px 10px;background:#fff;color:var(--teal-dark);border:1.5px solid var(--teal);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">🪪 カード印刷</button>` : '';
       return `<tr${isIssued ? ' style="opacity:0.6;"' : ''}>
         <td>${canPrint ? `<input type="checkbox" class="cert-select-cb" data-id="${d_id}">` : ''}</td>
-        <td><strong>${name}</strong><br><span style="font-size:11px;color:#888;">${a.email||''}</span><br><button onclick="openDetail('${d_id}')" class="detail-btn" style="margin-top:4px;">詳細</button></td>
+        <td><button onclick="openDetail('${d_id}')" class="detail-btn" style="padding:2px 10px;font-size:11px;margin-right:6px;">詳細</button><strong>${name}</strong><br><span style="font-size:11px;color:#888;">${a.email||''}</span></td>
         <td>${r.facility||'—'}</td>
         <td>${r.dateFrom||'—'} 〜 ${r.dateTo||'—'}</td>
         <td>${a.certDeliveryAddress||'—'}</td>
