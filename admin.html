@@ -684,7 +684,7 @@
     <div class="sb-scroll">
     <div class="sb-section">メニュー</div>
     <div class="sb-item active" id="menu-applications" onclick="if(window.showSection)window.showSection('applications')"><span class="ico">📋</span>申し込み管理</div>
-    <div class="sb-item" id="menu-alerts" onclick="if(window.showSection)window.showSection('alerts')"><span class="ico">⚠️</span>要注意チェック<span id="alerts-badge" style="display:none;margin-left:auto;background:#F06292;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
+    <div class="sb-item" id="menu-alerts" onclick="if(window.showSection)window.showSection('alerts')"><span class="ico">⚠️</span>要注意チェック<span id="alerts-badge" style="display:none;margin-left:auto;background:#FFC107;color:#000;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
     <div class="sb-item" id="menu-notices" onclick="if(window.showSection)window.showSection('notices')"><span class="ico">📢</span>お知らせ管理</div>
     <div class="sb-item" id="menu-textorder" onclick="if(window.showSection)window.showSection('textorder')"><span class="ico">📦</span>テキスト発注<span id="textorder-badge" style="display:none;margin-left:auto;background:#F06292;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
     <div class="sb-item" id="menu-documents" onclick="if(window.showSection)window.showSection('documents')"><span class="ico">🪪</span>書類確認<span id="doc-badge" style="display:none;margin-left:auto;background:#F06292;color:#fff;border-radius:10px;font-size:11px;padding:2px 7px;font-weight:700;"></span></div>
@@ -1050,6 +1050,9 @@
           <div class="thead">
             <div class="thead-title">🎬 動画教材（AEGISC-LMS）視聴完了届出</div>
             <div class="thead-acts">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-mid);cursor:pointer;border:1.5px dashed #F06292;border-radius:20px;padding:6px 12px;">
+                <input type="checkbox" id="show-test-video" onchange="loadVideoList()" style="cursor:pointer;">🧪 テストデータを表示
+              </label>
               <select id="video-filter-sel" onchange="window.setVideoFilter(this.value)" style="border:1.5px solid var(--border);border-radius:20px;padding:8px 28px 8px 14px;font-family:'Noto Sans JP',sans-serif;font-size:13px;outline:none;cursor:pointer;appearance:none;background:white url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234A7A85'/%3E%3C/svg%3E&quot;) no-repeat right 10px center;">
                 <option value="pending">対応待ち</option>
                 <option value="all">すべて</option>
@@ -1429,6 +1432,7 @@
                   <div class="note">📌 氏名の一致は表記ゆれ（旧字体・スペースの有無など）を考慮しない完全一致判定です。住所・郵便番号は、ハイフン表記／「丁目・番・号」表記／全角半角／スペースの違いを吸収して比較するため、表記が違っていても実質同じ住所なら一致として検知されます。誤検知（同姓同名の別人など）は「✓ 問題なし」で個別に非表示にしてください。</div>
                   <div class="note">📌 仮修了・正式修了の期限アラートは、受講生本人にはすでに「自動通知設定」から期限前にメールが送られていますが（仮修了：30・14・7・3・1日前／正式修了：30・14日前）、こちらは事務局側が一覧でまとめて把握・フォローするための画面です。</div>
                   <div class="note">📌 各項目の「詳細」ボタンから、申し込み管理と同じ受講生の詳細画面を直接開けます。</div>
+                  <div class="note">📌 サイドバーのバッジは、他のセクション（ピンク）と区別しやすいよう、この画面だけ黄色地に黒文字にしています。</div>
                 </div>
               </div>
 
@@ -1651,6 +1655,7 @@
                   <h4>操作</h4>
                   <ul>
                     <li><strong>絞り込み</strong>：対応待ち・すべて・承認済みで絞り込み可能</li>
+                    <li><strong>テストデータ表示トグル</strong>：テストデータ（isTest=true）の表示/非表示を切り替えます</li>
                   </ul>
                   <div class="note">📌 各行の「詳細」ボタンから、申し込み管理と同じ受講生の詳細画面を直接開けます。</div>
                 </div>
@@ -1695,7 +1700,7 @@
                   <h4>ステータスの流れ</h4>
                   <table>
                     <tr><th>ステータス</th><th>意味</th><th>次の操作</th></tr>
-                    <tr><td><span class="tag tag-gray">OJT修了報告待ち</span></td><td>OJT施設への届出（連絡・資料送付）は完了しているが、受講生のオンライン報告がまだ届いていない（施設からの書類だけ先に届くこともある）</td><td>書類が届いたら「📥 書類受付」</td></tr>
+                    <tr><td><span class="tag tag-orange">OJT修了報告待ち</span></td><td>OJT施設への届出（連絡・資料送付）は完了しているが、受講生のオンライン報告がまだ届いていない（施設からの書類だけ先に届くこともある）</td><td>書類が届いたら「📥 書類受付」</td></tr>
                     <tr><td><span class="tag tag-blue">OJT書類待ち</span></td><td>受講生の報告は届いたが、OJT施設からの書類がまだ</td><td>書類が届いたら「📥 書類受付」</td></tr>
                     <tr><td><span class="tag tag-orange">受付済み・確認中</span></td><td>受講生の報告・施設の書類ともに揃った</td><td>内容を確認し「✓ 書類承認」</td></tr>
                     <tr><td><span class="tag tag-green">承認済み</span></td><td>OJT修了を承認済み（<code>ojtPassed = true</code>）</td><td>—</td></tr>
@@ -5838,7 +5843,7 @@ async function doLogin() {
       return;
     }
     el.innerHTML = '<table><thead><tr>' +
-      '<th>受講生</th><th>施設名</th><th>住所</th><th>電話番号</th><th>担当者</th><th>届出理由</th><th>届出日</th><th>連絡日</th><th>資料送付日</th><th>ステータス</th>' +
+      '<th>氏名</th><th>施設名</th><th>住所</th><th>電話番号</th><th>担当者</th><th>届出理由</th><th>届出日</th><th>連絡日</th><th>資料送付日</th><th>ステータス</th>' +
       '</tr></thead><tbody>' + body + '</tbody></table>';
   }
 
@@ -5972,7 +5977,8 @@ async function doLogin() {
   function renderVideoTable() {
     const el = document.getElementById('video-list');
     if (!el || !__videoCache) return;
-    const rows = __videoCache.filter(r => {
+    const showTest = document.getElementById('show-test-video')?.checked;
+    const rows = __videoCache.filter(r => showTest || !r.isTest).filter(r => {
       if (__videoFilter === 'pending') return r.externalVideoPending === true && r.externalVideoDone !== true;
       if (__videoFilter === 'done')    return r.externalVideoDone === true;
       return true;
@@ -6033,7 +6039,7 @@ async function doLogin() {
       const snap = await getDocs(collection(window.__db, 'applications'));
       __videoCache = snap.docs
         .map(d => ({ __id: d.id, ...d.data() }))
-        .filter(r => !r.isTest && (r.externalVideoPending === true || r.externalVideoDone === true))
+        .filter(r => r.externalVideoPending === true || r.externalVideoDone === true)
         .sort((a, b) => (b.externalVideoPendingAt?.toMillis?.() || 0) - (a.externalVideoPendingAt?.toMillis?.() || 0));
       renderVideoTable();
     } catch(e) {
@@ -6094,7 +6100,7 @@ async function doLogin() {
         ? `<br><button onclick="openFacilityDetailModal('${a.linkedFacilityId}','log')" style="margin-top:4px;padding:4px 10px;background:#fff;color:#5C6BC0;border:1.5px solid #9FA8DA;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">📋 施設とのやりとり</button>`
         : `<br><button onclick="openFacilityRegFromVenue('${a.__id}')" style="margin-top:4px;padding:4px 10px;background:var(--teal-dark);color:white;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;">🏢 施設登録</button>`;
       const statusBadge = {
-        reportWaiting: '<span style="background:#F5F5F5;color:#757575;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">OJT修了報告待ち</span>',
+        reportWaiting: '<span style="background:#FBE9E7;color:#E64A19;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">OJT修了報告待ち</span>',
         docWaiting:    '<span style="background:#E8F0FE;color:#1A56DB;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">OJT書類待ち</span>',
         reviewing:     '<span style="background:#FFF8E1;color:#F57C00;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">受付済み・確認中</span>',
         approved:      '<span style="background:#E8F5E9;color:#2E7D32;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">承認済み</span>',
@@ -6117,7 +6123,7 @@ async function doLogin() {
     }
 
     let body = '';
-    if (showReportWaiting && groups.reportWaiting.length) body += `<tr><td colspan="8" style="padding:8px 14px;background:#F4F6F8;font-size:12px;font-weight:700;color:#757575;">▼ OJT修了報告待ち (${groups.reportWaiting.length}件)</td></tr>` + groups.reportWaiting.map(a => rowHtml(a,'reportWaiting')).join('');
+    if (showReportWaiting && groups.reportWaiting.length) body += `<tr><td colspan="8" style="padding:8px 14px;background:#FBE9E7;font-size:12px;font-weight:700;color:#E64A19;">▼ OJT修了報告待ち (${groups.reportWaiting.length}件)</td></tr>` + groups.reportWaiting.map(a => rowHtml(a,'reportWaiting')).join('');
     if (showDocWaiting && groups.docWaiting.length) body += `<tr><td colspan="8" style="padding:8px 14px;background:#E8F0FE;font-size:12px;font-weight:700;color:#1A56DB;">▼ OJT書類待ち (${groups.docWaiting.length}件)</td></tr>` + groups.docWaiting.map(a => rowHtml(a,'docWaiting')).join('');
     if (showReviewing && groups.reviewing.length) body += `<tr><td colspan="8" style="padding:8px 14px;background:#FFF8E1;font-size:12px;font-weight:700;color:#F57C00;">▼ 受付済み・確認中 (${groups.reviewing.length}件)</td></tr>` + groups.reviewing.map(a => rowHtml(a,'reviewing')).join('');
     if (showApproved && groups.approved.length) body += `<tr><td colspan="8" style="padding:8px 14px;background:#E8F5E9;font-size:12px;font-weight:700;color:#2E7D32;">▼ 承認済み (${groups.approved.length}件)</td></tr>` + groups.approved.map(a => rowHtml(a,'approved')).join('');
@@ -6127,7 +6133,7 @@ async function doLogin() {
       return;
     }
     el.innerHTML = '<table><thead><tr>' +
-      '<th>受講生</th><th>OJT施設名</th><th>OJT期間</th><th>備考</th><th>報告日</th><th>受付日</th><th>ステータス</th><th>操作</th>' +
+      '<th>氏名</th><th>OJT施設名</th><th>OJT期間</th><th>備考</th><th>報告日</th><th>受付日</th><th>ステータス</th><th>操作</th>' +
       '</tr></thead><tbody>' + body + '</tbody></table>';
   }
 
@@ -6253,7 +6259,7 @@ async function doLogin() {
       const filter = document.getElementById('tempcert-filter-sel')?.value || 'all';
       const showPending = filter === 'all' || filter === 'pending';
       const showSent    = filter === 'all' || filter === 'sent';
-      let html = '<table><thead><tr><th><input type="checkbox" id="cert-select-all" onchange="window.toggleAllCertSelect(this)"></th><th>受講生</th><th>受講番号</th><th>送付先住所</th><th>テスト２合格日</th><th>ステータス</th><th>発行履歴</th><th>操作</th></tr></thead><tbody>';
+      let html = '<table><thead><tr><th><input type="checkbox" id="cert-select-all" onchange="window.toggleAllCertSelect(this)"></th><th>氏名</th><th>受講番号</th><th>送付先住所</th><th>テスト２合格日</th><th>ステータス</th><th>発行履歴</th><th>操作</th></tr></thead><tbody>';
       if (showPending && pending.length) html += `<tr><td colspan="8" style="padding:8px 14px;background:#FFF8E1;font-size:12px;font-weight:700;color:#F57C00;">▼ 未発送 (${pending.length}件)</td></tr>` + rows(pending, false);
       if (showSent    && sent.length)    html += `<tr><td colspan="8" style="padding:8px 14px;background:#F4F6F8;font-size:12px;color:#888;">▼ 発送済み (${sent.length}件)</td></tr>` + rows(sent, true);
       if (!html.includes('<tr>')) html += `<tr><td colspan="8" style="padding:16px;color:var(--text-light);font-size:13px;">該当する受講生はいません。</td></tr>`;
@@ -6789,7 +6795,7 @@ async function doLogin() {
       return;
     }
     el.innerHTML = '<table><thead><tr>' +
-      '<th><input type="checkbox" onchange="window.toggleAllCertSelect(this)"></th><th>受講生</th><th>OJT施設名</th><th>OJT期間</th><th>送付先</th><th>承認日</th><th>OJT報告書類</th><th>正式修了日</th><th>ステータス</th><th>操作</th>' +
+      '<th><input type="checkbox" onchange="window.toggleAllCertSelect(this)"></th><th>氏名</th><th>OJT施設名</th><th>OJT期間</th><th>送付先</th><th>承認日</th><th>OJT報告書類</th><th>正式修了日</th><th>ステータス</th><th>操作</th>' +
       '</tr></thead><tbody>' + body + '</tbody></table>';
   }
   window.renderCertificateList = renderCertificateList;
