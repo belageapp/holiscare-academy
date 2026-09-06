@@ -3717,7 +3717,7 @@ async function doLogin() {
           </td>
           <td style="padding:10px 14px;">
             <button onclick="openDetail('${a.id}')" class="detail-btn" style="margin-bottom:4px;">詳細</button><br>
-            <button onclick="markTextOrdered('${a.id}',${isDone})" style="padding:5px 14px;background:${isDone ? '#F3F4F6' : 'var(--teal)'};color:${isDone ? '#6B7280' : 'white'};border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:opacity 0.2s;">
+            <button onclick="markTextOrdered('${a.id}',${isDone})" style="${isDone ? 'padding:5px 12px;background:#fff;color:#888;border:1.5px solid #ccc;' : 'padding:6px 16px;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:white;border:none;'}border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;">
               ${isDone ? '取消' : '発注済みにする'}
             </button>
           </td>
